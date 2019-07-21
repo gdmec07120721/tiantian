@@ -26,16 +26,19 @@
     "vue-template-compiler": "^2.6.10"
   },
   "eslintConfig": {
-    "root": true, 
+    "root": true,
     "env": {
-      "node": true 
+      "node": true
     },
     "extends": [
       "plugin:vue/essential",
       "@vue/standard"
     ],
     "rules": {
-      "indent": [2, 4]
+      "indent": [
+        2,
+        4
+      ]
     },
     "parserOptions": {
       "parser": "babel-eslint"

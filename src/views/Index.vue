@@ -18,7 +18,7 @@
 </style>
 
 <template>
-  <div class="page">
+  <div>
     <div class="banner">
       <van-swipe :autoplay="3000" indicator-color="red">
         <van-swipe-item 
@@ -42,7 +42,7 @@
           <span class="grid-item-text">{{ item.name }}</span>
         </van-grid-item>
       </van-grid>
-      <van-tabs class="van-tabs-wrap">
+      <van-tabs class="van-tabs-wrap" swipeable>
         <van-tab 
           v-for="(tab, index) in tabs" 
           :key="index" 

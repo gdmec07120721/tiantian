@@ -1,20 +1,17 @@
 <template>
   <div class="page">
-    <!-- <div class="preview-header"></div> -->
-    <the-card-second />
-    <the-article-content />
-    <the-article-footer />
+    <the-card-one />
   </div>
 </template>
 
 <script>
 import TheArticleContent from '@/views/common/TheArticleContent';
 import TheArticleFooter from '@/views/common/TheArticleFooter';
-import TheCardSecond from '@/views/common/TheCardSecond';
+import TheCardOne from '@/views/common/TheCardOne';
 
 export default {
   name: 'ArticlePreview',
-  components: { TheArticleContent, TheArticleFooter, TheCardSecond },
+  components: { TheCardOne },
   data() {
     return {
       url: ''

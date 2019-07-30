@@ -12,20 +12,36 @@ export default new Router({
       component: Index
     },
     {
-      path: '/addarticle',
-      name: 'addarticle',
+      path: '/articleAdd',
+      name: 'articleAdd',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/ArticleAdd.vue')
     },
     {
-      path: '/previewarticle',
-      name: 'previewarticle',
+      path: '/article',
+      name: 'article',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './views/Article.vue')
+    },
+    {
+      path: '/articlePreview',
+      name: 'articlePreview',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ './views/ArticlePreview.vue')
+    },
+    {
+      path: '/adAdd',
+      name: 'adAdd',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ './views/AdAdd.vue')
     },
     {
       path: '/about',

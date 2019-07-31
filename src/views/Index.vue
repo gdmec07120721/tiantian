@@ -1,22 +1,3 @@
-<style scoped>
-.swipe-item {width: 100%; line-height: 145px; display: block;}
-.grid-item-image >>> img {width: 20px;}
-.grid-item-text {font-size: 12px; padding-top: 11px;}
-.van-tabs-wrap {position: relative;  background: #fff;}
-.van-tabs-wrap >>> .van-tabs__nav {width: 90%; }
-.van-tab-add {display: flex; width: 16px; height: 16px; background: #F1413D; color: #fff; text-align: center; border-radius: 4px; align-items: center; justify-content: center; position: absolute; right: 15px; top:13px;}
-.van-tab-add:before {font-size: 12px; height: 12px;}
-.van-tabs-content {position: fixed; top:267px; bottom: 35px; z-index: 0; overflow: auto;}
-.tabs-content-wrap {padding: 15px; background: #fff;}
-.tabs-content-wrap > li {width: 100%; display: flex; align-items: stretch; padding-bottom: 15px;}
-.tabs-content-right{display: flex; flex-direction: column; align-content: space-around; justify-content: space-between; margin-left: 10px;}
-.tabs-content-right h3 {font-size: 15px; text-align: left; font-weight: 400; margin: 0;}
-.content-right-footer {font-size: 12px; display: flex; justify-content: space-between; color: #A6A6A6;}
-.tabs-share-wrap {color: #F1413D;}
-.tabs-share-wrap i {height: 12px; line-height: 15px; margin-right: 4px;}
-.tabs-share-wrap span, .tabs-share-wrap i{display: inline-block; vertical-align: middle;}
-</style>
-
 <template>
   <div>
     <div class="banner">
@@ -73,7 +54,7 @@
             </van-pull-refresh>
           </div>
         </van-tab>
-        <van-icon name="plus" class="van-tab-add" />
+        <van-icon name="plus" class="van-tab-add" @click="toAdAdd" />
       </van-tabs>
     </div>
     <div class="footer">
@@ -125,6 +106,9 @@ export default {
         this.isLoading = false;
         this.count++;
       }, 500);
+    },
+    toAdAdd() {
+      this.$router.push({ name: 'adAdd' });
     }
   }
 };

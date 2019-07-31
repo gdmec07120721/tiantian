@@ -1,4 +1,4 @@
-import Index from './views/Index.vue';
+import Index from '@/views/Index.vue';
 
 const routes = {
   routes: [
@@ -13,7 +13,7 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/ArticleAdd.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/ArticleAdd.vue')
     },
     {
       path: '/article',
@@ -21,7 +21,7 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/Article.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/Article.vue')
     },
     {
       path: '/articlePreview',
@@ -29,7 +29,7 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/ArticlePreview.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/ArticlePreview.vue')
     },
     {
       path: '/adAdd',
@@ -37,17 +37,9 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/AdAdd.vue')
-    },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/AdAdd.vue')
     }
   ]
-}
+};
 
 export default routes;

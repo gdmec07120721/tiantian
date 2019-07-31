@@ -6,9 +6,18 @@ import http from '@/utils/http';
 import userAgent from '@/utils/userAgent';
 import Vant from 'vant';
 import 'vant/lib/index.css';
+import '@/config/index';
 import '@/assets/css/common.css';
-import './config';
 import { Lazyload } from 'vant';
+
+import VueQuillEditor from 'vue-quill-editor';
+
+// require styles
+import 'quill/dist/quill.core.css';
+import 'quill/dist/quill.snow.css';
+import 'quill/dist/quill.bubble.css';
+
+Vue.use(VueQuillEditor, /* { default global options } */);
 
 Vue.config.productionTip = false;
 

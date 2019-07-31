@@ -33,3 +33,15 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'TheCardSecond',
+  props: {
+    options: {
+      type: Object,
+      default: () => {}
+    }
+  }
+};
+</script>

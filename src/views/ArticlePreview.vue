@@ -1,7 +1,6 @@
 <template>
   <div class="page">
-    <!-- <div class="preview-header"></div> -->
-    <the-card-second />
+    <div class="preview-header"></div>
     <the-article-content />
     <the-article-footer />
   </div>
@@ -10,11 +9,10 @@
 <script>
 import TheArticleContent from '@/views/common/TheArticleContent';
 import TheArticleFooter from '@/views/common/TheArticleFooter';
-import TheCardSecond from '@/views/common/TheCardSecond';
 
 export default {
   name: 'ArticlePreview',
-  components: { TheArticleContent, TheArticleFooter, TheCardSecond },
+  components: { TheArticleContent, TheArticleFooter },
   data() {
     return {
       url: ''

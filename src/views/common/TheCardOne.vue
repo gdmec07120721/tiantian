@@ -30,3 +30,16 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'TheCardOne',
+  props: {
+    options: {
+      type: Object,
+      default: () => {}
+    }
+  }
+};
+</script>
+

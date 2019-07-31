@@ -25,12 +25,13 @@
       </van-grid>
       <van-tabs class="van-tabs-wrap" swipeable>
         <van-tab 
-          v-for="(tab, index) in tabs" 
+          v-for="(tab, index) in tabs"
           :key="index" 
+          v-model="tab_active" 
           :title="tab"
         >
           <div class="van-tabs-content">
-            <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+            <van-pull-refresh v-model="is_loading" @refresh="queryList">
               <ul class="tabs-content-wrap">
                 <li v-for="index in 8" :key="index" class="van-hairline--bottom">
                   <van-image
@@ -72,8 +73,6 @@
 export default {
   data() {
     return {
-      isLoading: false,
-      active: 0,
       swipes: {
         0: require('@/assets/images/banner-1.png'),
         1: require('@/assets/images/banner-1.png'),
@@ -90,20 +89,30 @@ export default {
         image: require('@/assets/images/icon-agent.png')
 
       }],
+      tab_active: 0,
       tabs: {
         0: '推荐',
         1: '资讯',
         2: '娱乐',
         3: '军事',
         4: '企业制定'
-      }
+      },
+      is_loading: false
     };
   },
+  watch: {
+    tab_active(nv) {
+      this.queryList();
+    }
+  },
   methods: {
+    queryList() {
+
+    },
     onRefresh() {
       setTimeout(() => {
         this.$toast('刷新成功');
-        this.isLoading = false;
+        this.is_loading = false;
         this.count++;
       }, 500);
     },

@@ -14,7 +14,7 @@ export default {
   props: {
     showShareBtn: {
       type: Boolean,
-      default: true
+      default: false
     },
     showInsterBtn: {
       type: Boolean,

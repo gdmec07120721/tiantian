@@ -17,7 +17,7 @@ import TheCardOne from '@/views/common/TheCardOne';
 import TheCardSecond from '@/views/common/TheCardSecond';
 
 export default {
-  name: 'ArticlePreview',
+  name: 'Article',
   components: { TheCardOne, TheCardSecond, TheArticleContent, TheArticleFooter },
   data() {
     return {
@@ -29,6 +29,14 @@ export default {
         content: 'sadasdsadas<img src="https://img.yzcdn.cn/vant/cat.jpeg" />'
       }
     };
+  },
+  methods: {
+    queryDetail() {
+
+      
+      "news_id":10,//新闻id,当用户直接点击推荐新闻时传入，否则为空
+"news_url":"http://baidu.com",//新闻url，当用户主动输入新闻连接时，否则为空
+    }
   }
 };
 </script>

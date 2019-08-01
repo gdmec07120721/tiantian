@@ -9,14 +9,13 @@
       <quill-editor
         v-if="contenteditable"
         ref="myQuillEditor"
-        v-model="article.content"
+        v-model="article.text"
         :options="editorOption"
         @blur="onEditorBlur($event)"
         @focus="onEditorFocus($event)"
         @ready="onEditorReady($event)"
       />
-      <div v-else class="preview-content-wrap" v-html="article.content"></div>
-      
+      <div v-else class="preview-content-wrap" v-html="article.text"></div>
     </template>
   </div>
 </template>
@@ -70,7 +69,7 @@ export default {
       },
       deep: true
     },
-    'article.content': (nv) => {
+    'article.text': (nv) => {
       console.log(nv);
     }
   },

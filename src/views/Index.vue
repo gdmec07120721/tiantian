@@ -31,17 +31,29 @@
           :title="tab"
         >
           <div class="van-tabs-content">
-            <van-pull-refresh v-model="is_loading" @refresh="queryList">
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              :error.sync="error"
+              error-text="请求失败，点击重新加载"
+              @load="listLoad"
+            >
               <ul class="tabs-content-wrap">
-                <li v-for="index in 8" :key="index" class="van-hairline--bottom">
+                <li 
+                  v-for="item in new_list" 
+                  :key="item.news_id" 
+                  class="van-hairline--bottom"
+                  @click="toArticle(item)"
+                >
                   <van-image
                     class="tabs-content-left"
                     width="224"
                     fit="contain"
-                    src="https://img.yzcdn.cn/vant/apple-1.jpg"
+                    :src="item.news_image_url"
                   />
                   <div class="tabs-content-right">
-                    <h3>华谊兄弟终止收购，英雄互娱或 转主，华谊最新消息！</h3>
+                    <h3>{{ item.news_headline }}</h3>
                     <div class="content-right-footer">
                       <div>03/10  16:00</div>
                       <div class="tabs-share-wrap">
@@ -52,7 +64,29 @@
                   </div>
                 </li>
               </ul>
-            </van-pull-refresh>
+            </van-list>
+            <!-- <van-pull-refresh v-model="is_loading" @refresh="refreshList">
+              <ul class="tabs-content-wrap">
+                <li v-for="item in new_list" :key="item.news_id" class="van-hairline--bottom">
+                  <van-image
+                    class="tabs-content-left"
+                    width="224"
+                    fit="contain"
+                    :src="item.news_image_url"
+                  />
+                  <div class="tabs-content-right">
+                    <h3>{{news_headline}}</h3>
+                    <div class="content-right-footer">
+                      <div>03/10  16:00</div>
+                      <div class="tabs-share-wrap">
+                        <van-icon name="share" /> 
+                        <span>推广获客</span>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </van-pull-refresh> -->
           </div>
         </van-tab>
         <van-icon name="plus" class="van-tab-add" @click="toAdAdd" />
@@ -73,6 +107,11 @@
 export default {
   data() {
     return {
+      limit: 10,
+      total_num: 0,
+      page_num: 1,
+      pages: 3, //总页数
+      new_list: [],
       swipes: {
         0: require('@/assets/images/banner-1.png'),
         1: require('@/assets/images/banner-1.png'),
@@ -97,27 +136,55 @@ export default {
         3: '军事',
         4: '企业制定'
       },
-      is_loading: false
+      loading: false,
+      finished: false,
+      error: false
     };
   },
   watch: {
     tab_active(nv) {
+      this.page_num = 1;
+      this.loading = false;
+      this.finished = false;
       this.queryList();
     }
   },
   methods: {
-    queryList() {
-
+    listLoad() {
+      this.finished = true;
     },
-    onRefresh() {
-      setTimeout(() => {
-        this.$toast('刷新成功');
-        this.is_loading = false;
-        this.count++;
-      }, 500);
+    queryList() {
+      this.$http({
+        url: this.$http.adornUrl('/news/query_publish_news_list'),
+        method: 'get',
+        data: this.$http.adornParams({
+          limit: this.limit,
+          page_num: this.page_num,
+          new_type: this.tab_active
+        })
+      })
+        .then(res => {
+          this.loading = false;
+
+          if (res && res.retcode == 0) {
+            this.new_list = res.result_rows || [];
+            this.error = false;
+          } else {
+            this.list = [];
+            this.$toast(res.retmsg);
+            this.error = true;
+          }
+        });
+    },
+    refreshList() {
+      this.page_num = 1;
+      this.queryList();
     },
     toAdAdd() {
       this.$router.push({ name: 'adAdd' });
+    },
+    toArticle(item) {
+      this.$router.push({ name: 'article', params: { id: item.news_id }});
     }
   }
 };

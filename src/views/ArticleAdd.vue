@@ -10,12 +10,12 @@
           v-model="url"
           type="url"
           clearable
-          placeholder="请输入文章链接"
+          placeholder="请粘贴文章链接"
         />
       </div>
       <p class="add-article-tip">支持公众号、腾讯新闻、今日头条新闻链接</p>
       <div>
-        <van-button type="primary" class="add-article-btn">下一步</van-button>
+        <van-button type="primary" class="add-article-btn" @click="submit">下一步</van-button>
       </div>
     </div>
     <div class="add-article-tip-wrap">
@@ -37,6 +37,39 @@ export default {
     return {
       url: ''
     };
+  },
+  methods: {
+    isURL(url) {
+      let strRegex = /^(https?:\/\/)([0-9a-z.]+)(:[0-9]+)?([/0-9a-z.]+)?(\?[0-9a-z&=]+)?(#[0-9-a-z]+)?/i;
+
+      return strRegex.test(url);
+    },
+    submit() {
+      if (!this.url) {
+        this.$toast.fail('请粘贴链接');
+        return false; 
+      } else if (!this.isURL(this.url)) {
+        this.$toast.fail('请输入正确的链接');
+        return false; 
+      }
+
+      this.$http({
+        url: this.$http.adornUrl('/news/query_publish_news_info'),
+        method: 'post',
+        data: this.$http.adornParams({
+          url: this.url
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            setTimeout(() => {
+              this.$router.push({ name: 'articlePreview', params: { id: res.result_rows[0].news_id }});
+            }, 500);
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
+    }
   }
 };
 </script>

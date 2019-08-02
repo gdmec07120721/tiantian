@@ -3,7 +3,7 @@
     <van-tabs v-model="tab_active" class="ad-add" swipeable>
       <van-tab v-for="(tab, index) in tab_config" :key="index" :title="tab">
         <div class="ad-add-tabs">
-          <component :is="tabs[index]" />
+          <component :is="tabs[index]" :new-id="new_id" />
         </div>
       </van-tab>
     </van-tabs>
@@ -26,6 +26,11 @@ export default {
       },
       tabs: ['AdAddCard', 'AdAddBanner']
     };
+  },
+  computed: {
+    new_id() {
+      return this.$router.params.id;
+    }
   }
 };
 </script>

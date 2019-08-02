@@ -7,3 +7,15 @@
     </van-cell-group>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'Banner',
+  props: {
+    newId: {
+      type: [String, Number],
+      default: ''
+    }
+  }
+};
+</script>

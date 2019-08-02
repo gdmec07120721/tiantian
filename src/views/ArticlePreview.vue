@@ -17,10 +17,16 @@ export default {
     return {
       news_id: this.$router.params,
       url: '',
-      article: {},
-      business_card_id: '',
-      banner_ad_id: ''
+      article: {}
     };
+  },
+  computed: {
+    business_card_id() {
+      return this.$store.articleCard.business_card.business_card_id;
+    },
+    banner_ad_id() {
+      return this.$store.articleBanner.banner_ad.banner_ad_id;
+    }
   },
   methods: {
     queryArticleDetail() {
@@ -41,7 +47,7 @@ export default {
     },
     submit() {
       this.$http({
-        url: this.$http.adornUrl('/news/query_publish_news_info'),
+        url: this.$http.adornUrl('/news/save_user_edit_news'),
         method: 'post',
         data: this.$http.adornParams({
           user_business_card: {
@@ -56,11 +62,14 @@ export default {
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.article = res.result_rows[0];
+            this.share();
           } else {
             this.$toast(res.retmsg);
           }
         });
+    },
+    share() {
+      
     }
   }
 };

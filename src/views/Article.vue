@@ -30,9 +30,18 @@ export default {
       }
     };
   },
+  computed: {
+    new_id() {
+      return this.$store
+    }
+  },
+  created() {
+    this.queryDetail();
+  },
   methods: {
     queryDetail() {
 
+      
       
       "news_id":10,//新闻id,当用户直接点击推荐新闻时传入，否则为空
 "news_url":"http://baidu.com",//新闻url，当用户主动输入新闻连接时，否则为空

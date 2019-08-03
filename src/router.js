@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import axios from 'axios';
 import routes from '@/router/index';
 import { Toast } from 'vant';
+import WEIXINCON from '@/config/weixinConfig';
 
 
 Vue.use(Router);
@@ -73,6 +74,7 @@ function openWeixin(redirect_path) {
   //拉起微信授权登录页面
   window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${window.SITE_CONFIG.weixin_appid}&redirect_uri=${encodeURI(redirect_path)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`;
 }
+
 async function getJsapiTicket() {
   Vue.prototype.$http({
     url: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
@@ -88,6 +90,20 @@ async function getJsapiTicket() {
       Toast(res.errmsg);
     }
   });
+}
+
+sha1Signature(ticket) {
+  let signature = '', 
+      string = `jsapi_ticket=${ticket}`;
+
+  for (let i in WEIXINCON) {
+    string += `${i}=${WEIXINCON[i]}`
+  }
+
+  string += `url=${window.SITE_CONFIG.baseUrl}`
+
+  signature = sha1(string)
+  
 }
 
 export default router;

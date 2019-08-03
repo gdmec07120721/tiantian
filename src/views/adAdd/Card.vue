@@ -60,7 +60,7 @@
 export default {
   name: 'Card',
   props: {
-    newId: {
+    newsId: {
       type: [String, Number],
       default: ''
     }
@@ -100,7 +100,7 @@ export default {
     },
     save() {
       let params = Object.assign({}, this.params, {
-        new_id: this.newId
+        news_id: this.newsId
       });
 
       this.$http({
@@ -118,6 +118,7 @@ export default {
     },
     saveStore(params) {
       this.$store.commit('articleCard/saveBusinessCard', params);
+      this.$router.push({ name: 'articlePreview', params: { id: this.params.news_id }});
     }
   }
 };

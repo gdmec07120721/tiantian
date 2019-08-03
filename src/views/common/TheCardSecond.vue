@@ -6,7 +6,7 @@
           width="100%"
           height="120px"
           fit="contain"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="options.user_head_portrait"
         />
       </p>
     </div>
@@ -14,21 +14,21 @@
       <ul>
         <li>
           <van-icon name="hotel-o" />
-          <span>天津木云文化有限公司</span>
+          <span>{{ options.user_company_name }}</span>
         </li>
         <li>
           <van-icon name="phone-o" />
-          <span>13811110359</span>
+          <span>{{ options.telphone }}</span>
         </li>
       </ul>
       <p class="card-second-info-btn">
-        <van-button round type="danger" class="card-btn">立即电联</van-button>
+        <van-button round type="danger" class="card-btn" @click="call">立即电联</van-button>
       </p>
     </div>
     <div class="card-second-name">
       <p>
-        <span class="card-name">福记层</span>
-        <span class="card-position">产品经理</span>
+        <span class="card-name">{{ options.user_name }}</span>
+        <span class="card-position">{{ options.position }}</span>
       </p>
     </div>
   </div>
@@ -41,6 +41,11 @@ export default {
     options: {
       type: Object,
       default: () => {}
+    }
+  },
+  methods: {
+    call() {
+      // TODO 调起拨打
     }
   }
 };

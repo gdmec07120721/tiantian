@@ -2,6 +2,8 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import axios from 'axios';
 import routes from '@/router/index';
+import { Toast } from 'vant';
+
 
 Vue.use(Router);
 
@@ -19,7 +21,7 @@ function login(data) {
       })
     }).then(res => {
       if (res && res.code === 0) {
-        resoleve(res.data);
+        resoleve(res.result_rows[0]);
       } else {
         reject(res.msg);
       }
@@ -49,6 +51,9 @@ router.beforeEach((to, from, next) => {
   //       .then(res => {
   //         //设置token到herder
   //         setToken(res.token);
+  //         //需要后台返回access_token 在基础接口配置需要用到
+  //         window.SITE_CONFIG.access_token = res.access_token;
+  //         getJsapiTicket();
   //         next();
   //       })
   //       .catch(() => {
@@ -67,6 +72,22 @@ router.beforeEach((to, from, next) => {
 function openWeixin(redirect_path) {
   //拉起微信授权登录页面
   window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${window.SITE_CONFIG.weixin_appid}&redirect_uri=${encodeURI(redirect_path)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`;
+}
+async function getJsapiTicket() {
+  Vue.prototype.$http({
+    url: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
+    method: 'post',
+    data: Vue.prototype.$http.adornData({
+      access_token: window.SITE_CONFIG.access_token,
+      type: 'jsapi'
+    })
+  }).then(res => {
+    if (res && res.errcode === 0) {
+      window.SITE_CONFIG.ticket = res.ticket;
+    } else {
+      Toast(res.errmsg);
+    }
+  });
 }
 
 export default router;

@@ -4,7 +4,7 @@
 
 <template>
   <div class="page">
-    <component :is="card_type_config[card_type]" :options="card_options" />
+    <component :is="card_type_config[user_business_card.card_type]" :options="user_business_card" />
     <the-article-content class="article-content" :options="article" :contenteditable="true" />
     <the-article-footer />
   </div>
@@ -22,9 +22,10 @@ export default {
   data() {
     return {
       url: '',
-      card_type: '',
       card_type_config: ['TheCardOne', 'TheCardSecond'],
-      card_options: {},
+      user_business_card: {
+        card_type: 0
+      },
       article: {
         content: 'sadasdsadas<img src="https://img.yzcdn.cn/vant/cat.jpeg" />'
       }
@@ -32,7 +33,7 @@ export default {
   },
   computed: {
     new_id() {
-      return this.$store
+      return this.$store;
     }
   },
   created() {
@@ -40,11 +41,22 @@ export default {
   },
   methods: {
     queryDetail() {
-
-      
-      
-      "news_id":10,//新闻id,当用户直接点击推荐新闻时传入，否则为空
-"news_url":"http://baidu.com",//新闻url，当用户主动输入新闻连接时，否则为空
+      this.$http({
+        url: this.$http.adornUrl('/news/query_publish_news_info'),
+        method: 'post',
+        data: this.$http.adornParams({
+          new_id: this.new_id
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            this.article = res.result_rows[0];
+            this.user_business_card = res.result_rows[0].user_business_card;
+            // TODO 页脚广告是否可以在不同位置 是否有点击效果 是否有广告内容???
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
     }
   }
 };

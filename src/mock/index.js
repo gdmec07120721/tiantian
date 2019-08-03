@@ -1,7 +1,6 @@
 import Mock from 'mockjs';
 
 Mock.mock(/\/news\/query_publish_news_list/, {
-  //缺少时间字段
   'limit': 10,
   'total_num': 37,
   'page_num': 1,
@@ -67,7 +66,15 @@ Mock.mock(/\/images\/save_user_add_image/, {
   ]
 });
 
+//新闻列表返回字段缺少时间字段
 //缺少用户广告信息添加
+//缺少文章详情接口
+//详情返回 没有标题和时间字段 没有来源字段
+//广告位置需要放置不同位置？ "location_type":1；//"广告位置：1：底部；2：顶部
+//"ad_slogan":"广告标语"?
+// "ad_image_url":"http://eeeeee.jpg";//广告图片的链接
+// "ad_click_effect_type":1,//"广告点击效果:1:跳转链接；2：拨打电话；3：展示海报";
+// "ad_click_content":"广告点击内容";
 
 // url: http://tiantiantui.top/news/save_user_edit_news
 // 请求方式：Post
@@ -88,11 +95,11 @@ Mock.mock(/\/images\/save_user_add_image/, {
 // "retcode":"0",
 // "retmsg":"success",
 // "result_rows":[
-// {				
+// {
 // "news_id":1, //新闻id
 // "news_headline":"华为鸿蒙系统即将推出", //新闻标题
 // "news_source_detail":"今日头条",//新闻机构
-// "news_image_url":"http://image.jpd",//新闻图片			
+// "news_image_url":"http://image.jpd",//新闻图片
 // "news_url":"http://tiantiantui.top/news/query_user_own_news?news_id=1 //分享到微信的链接
 
 // }

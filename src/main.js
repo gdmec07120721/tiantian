@@ -7,6 +7,7 @@ import userAgent from '@/utils/userAgent';
 import Vant from 'vant';
 import 'vant/lib/index.css';
 import '@/config/index';
+//import '@/config/weixinConfig';
 import '@/assets/css/common.css';
 import { Lazyload } from 'vant';
 

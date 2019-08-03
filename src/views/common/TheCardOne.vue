@@ -1,18 +1,18 @@
 <template>
   <div class="card-one">
     <div class="card-one-name">
-      <span>福记层</span>
-      <span class="card-one-position">产品经理</span>
+      <span>{{ options.user_name }}</span>
+      <span class="card-one-position">{{ options.position }}</span>
     </div>
     <div class="card-one-info">
       <ul>
         <li>
           <van-icon name="hotel-o" />
-          <span>天津木云文化有限公司</span>
+          <span>{{ options.user_company_name }}</span>
         </li>
         <li>
           <van-icon name="phone-o" />
-          <span>13811110359</span>
+          <span>{{ options.telphone }}</span>
         </li>
       </ul>
       <div class="card-one-img">
@@ -21,12 +21,12 @@
           width="60px"
           height="60px"
           fit="cover"
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
+          :src="options.user_head_portrait"
         />
       </div>
     </div>
     <div class="card-one-btn">
-      <van-button type="danger" size="small" class="card-btn">立即电联</van-button>
+      <van-button type="danger" size="small" class="card-btn" @click="call">立即电联</van-button>
     </div>
   </div>
 </template>
@@ -38,6 +38,11 @@ export default {
     options: {
       type: Object,
       default: () => {}
+    }
+  },
+  methods: {
+    call() {
+      
     }
   }
 };

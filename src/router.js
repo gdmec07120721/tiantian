@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import axios from 'axios';
+import sha1 from 'sha1';
 import routes from '@/router/index';
 import { Toast } from 'vant';
 import WEIXINCON from '@/config/weixinConfig';
@@ -86,24 +87,28 @@ async function getJsapiTicket() {
   }).then(res => {
     if (res && res.errcode === 0) {
       window.SITE_CONFIG.ticket = res.ticket;
+      setWxConfig(window.SITE_CONFIG.ticket);
     } else {
       Toast(res.errmsg);
     }
   });
 }
 
-sha1Signature(ticket) {
-  let signature = '', 
-      string = `jsapi_ticket=${ticket}`;
+function setWxConfig(ticket) {
+  let signature = '';
+  let string = `jsapi_ticket=${ticket}`;
 
   for (let i in WEIXINCON) {
-    string += `${i}=${WEIXINCON[i]}`
+    string += `${i}=${WEIXINCON[i]}`;
   }
 
-  string += `url=${window.SITE_CONFIG.baseUrl}`
+  string += `url=${window.SITE_CONFIG.baseUrl}`;
+  signature = sha1(string);
 
-  signature = sha1(string)
-  
+  wx.config(Object.assign({}, WEIXINCON, {
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    signature: signature
+  }));
 }
 
 export default router;

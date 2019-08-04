@@ -15,3 +15,5 @@ const weixin_config = {
   nonceStr: 'jsapi_ticket', // 必填，生成签名的随机串
   jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'] // 必填，需要使用的JS接口列表
 }; 
+
+export default weixin_config;

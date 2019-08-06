@@ -8,6 +8,9 @@ p {margin: 0;}
 .text-right {text-align: right;}
 .text-center {text-align: center;}
 
+/* icon */
+@import url('./iconfont.css');
+
 /* Index.vue */
 .swipe-item {width: 100%; line-height: 145px; display: block;}
 .grid-item-image img {width: 20px;}

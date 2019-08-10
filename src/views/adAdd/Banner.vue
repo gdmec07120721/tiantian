@@ -1,6 +1,6 @@
 <style>
 .banner-upload-wrap {text-align: center;}
-.icon-banner-upload {width: 60px; height: 56px; background: url(../../assets/icon-banner-upload); background-size: contain;}
+.icon-banner-upload {width: 60px; height: 56px; background: url(../../assets/icon-banner-upload.png); background-size: contain;}
 </style>
 
 <template>
@@ -60,7 +60,7 @@ export default {
         1: '拨打电话',
         2: '展示海报'
       }
-    }
+    };
   }
 };
 </script>

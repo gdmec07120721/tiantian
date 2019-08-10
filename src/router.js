@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import axios from 'axios';
-import sha1 from 'sha1';
 import routes from '@/router/index';
 import { Toast } from 'vant';
 import WEIXINCON from '@/config/weixinConfig';
@@ -53,9 +52,8 @@ router.beforeEach((to, from, next) => {
   //       .then(res => {
   //         //设置token到herder
   //         setToken(res.token);
-  //         //需要后台返回access_token 在基础接口配置需要用到
-  //         window.SITE_CONFIG.access_token = res.access_token;
-  //         getJsapiTicket();
+  //         //需要后台返回 signature 和相应的信息在基础接口配置需要用到
+  //         setWxConfig();
   //         next();
   //       })
   //       .catch(() => {
@@ -76,38 +74,27 @@ function openWeixin(redirect_path) {
   window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${window.SITE_CONFIG.weixin_appid}&redirect_uri=${encodeURI(redirect_path)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`;
 }
 
-async function getJsapiTicket() {
-  Vue.prototype.$http({
-    url: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
-    method: 'post',
-    data: Vue.prototype.$http.adornData({
-      access_token: window.SITE_CONFIG.access_token,
-      type: 'jsapi'
-    })
-  }).then(res => {
-    if (res && res.errcode === 0) {
-      window.SITE_CONFIG.ticket = res.ticket;
-      setWxConfig(window.SITE_CONFIG.ticket);
-    } else {
-      Toast(res.errmsg);
-    }
-  });
-}
+// async function getJsapiTicket() {
+//   Vue.prototype.$http({
+//     url: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
+//     method: 'post',
+//     data: Vue.prototype.$http.adornData({
+//       access_token: window.SITE_CONFIG.access_token,
+//       type: 'jsapi'
+//     })
+//   }).then(res => {
+//     if (res && res.errcode === 0) {
+//       window.SITE_CONFIG.ticket = res.ticket;
+//       setWxConfig(window.SITE_CONFIG.ticket);
+//     } else {
+//       Toast(res.errmsg);
+//     }
+//   });
+// }
 
-function setWxConfig(ticket) {
-  let signature = '';
-  let string = `jsapi_ticket=${ticket}`;
-
-  for (let i in WEIXINCON) {
-    string += `${i}=${WEIXINCON[i]}`;
-  }
-
-  string += `url=${window.SITE_CONFIG.baseUrl}`;
-  signature = sha1(string);
-
-  wx.config(Object.assign({}, WEIXINCON, {
-    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-    signature: signature
+function setWxConfig(config) {
+  wx.config(Object.assign({}, WEIXINCON, config, {
+    debug: true // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
   }));
 }
 

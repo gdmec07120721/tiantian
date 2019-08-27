@@ -1,8 +1,14 @@
+<style scoped>
+.tabs >>> .van-hairline--top-bottom::after {border: none;}
+.tabs >>> .van-tabs__nav{background: none; border: 0;}
+.tabs-page {padding-top: 10px; text-align: left;}
+</style>
+
 <template>
   <div class="page">
-    <van-tabs v-model="tab_active" class="ad-add" swipeable>
+    <van-tabs v-model="tab_active" class="tabs" swipeable>
       <van-tab v-for="(tab, index) in tab_config" :key="index" :title="tab">
-        <div class="ad-add-tabs">
+        <div class="tabs-page">
           <component :is="tabs[index]" :new-id="new_id" />
         </div>
       </van-tab>
@@ -29,8 +35,9 @@ export default {
   },
   computed: {
     new_id() {
-      return this.$router.params.id;
+      return this.$route.params.id;
     }
   }
 };
 </script>
+

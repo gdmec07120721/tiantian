@@ -1,19 +1,32 @@
+<style scoped>
+.preview-content-title {font-size: 21px;}
+.preview-content-info {font-size: 12px; color: #666;}
+.quill-editor >>> .ql-editor {min-height: 255px;}
+.preview-content-wrap {text-align: left; }
+
+@media screen and (max-width: 320px){
+  .preview-content-title {margin-top: 0px;}
+    .quill-editor >>> .ql-editor {min-height: 150px;}
+}
+</style>
+
 <template>
   <div class="preview-content">
-    <h3 class="preview-content-title">为什么说贸易战美国一定会输？</h3>
-    <p class="preview-content-info">
+    <h3 class="preview-content-title text-left mb-0">为什么说贸易战美国一定会输？</h3>
+    <p class="preview-content-info text-left">
       <span>来源：央广新闻</span>
       <span>2019-07-11</span>
     </p>
     <template>
-      <quill-editor
+      <quill-editor 
         v-if="contenteditable"
         ref="myQuillEditor"
-        v-model="article.text"
-        :options="editorOption"
+        v-model="article.text" 
+        class="quill-editor" 
+        :options="editorOption" 
         @blur="onEditorBlur($event)"
         @focus="onEditorFocus($event)"
-        @ready="onEditorReady($event)"
+        @change="onEditorChange($event)"
       />
       <div v-else class="preview-content-wrap" v-html="article.text"></div>
     </template>
@@ -39,38 +52,36 @@ export default {
       editorOption: {
         modules: {
           toolbar: [
-            [{ 'size': ['small', false, 'large'] }],
-            ['bold', 'italic'],
-            [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-            ['link', 'image']
-          ],
-          history: {
-            delay: 1000,
-            maxStack: 50,
-            userOnly: false
-          },
-          imageDrop: true,
-          imageResize: {
-            displayStyles: {
-              backgroundColor: 'black',
-              border: 'none',
-              color: 'white'
-            },
-            modules: [ 'Resize', 'DisplaySize', 'Toolbar' ]
-          }
+            ['bold', 'italic', 'underline', 'strike'],    //加粗，斜体，下划线，删除线
+            // ['blockquote', 'code-block'],     //引用，代码块
+            [{ 'header': 1 }, { 'header': 2 }]        // 标题，键值对的形式；1、2表示字体大小
+            // [{ 'list': 'ordered' }, { 'list': 'bullet' }],     //列表
+            // [{ 'script': 'sub' }, { 'script': 'super' }],   // 上下标
+            // [{ 'indent': '-1' }, { 'indent': '+1' }],     // 缩进
+            // [{ 'direction': 'rtl' }],             // 文本方向
+            // [{ 'size': ['small', false, 'large', 'huge'] }], // 字体大小
+            // [{ 'header': [1, 2, 3, 4, 5, 6, false] }],     //几级标题
+            // [{ 'color': [] }, { 'background': [] }],     // 字体颜色，字体背景颜色
+            // [{ 'font': [] }],     //字体
+            // [{ 'align': [] }]    //对齐方式
+            // ['clean']    //清除字体样式
+            // ['image', 'video']    //上传图片、上传视频
+          ]
         }
       }
     };
   },
+  computed: {
+    editor() {
+      return this.$refs.myQuillEditor.quill;
+    }
+  },
   watch: {
     options: {
-      handler: (nv) => {
+      handler: function(nv) {
         this.article = nv;
       },
       deep: true
-    },
-    'article.text': (nv) => {
-      console.log(nv);
     }
   },
   created() {
@@ -79,7 +90,9 @@ export default {
   mounted() {
   },
   methods: {
-    updateContent(value) {
+    onEditorReady(editor) { // 准备编辑器
+    },
+    onEditorChange(value) {
 
     },
     onEditorBlur(quill) {
@@ -87,9 +100,6 @@ export default {
     },
     onEditorFocus(quill) {
       console.log('editor focus!', quill);
-    },
-    onEditorReady(quill) {
-      console.log('editor ready!', quill);
     }
   }
 };

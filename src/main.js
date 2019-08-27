@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store';
+import store from '@/store/index';
 import http from '@/utils/http';
 import userAgent from '@/utils/userAgent';
 import Vant from 'vant';
@@ -12,11 +12,11 @@ import '@/assets/css/common.css';
 import { Lazyload } from 'vant';
 
 import VueQuillEditor from 'vue-quill-editor';
-
-// require styles
 import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
+
+require('@/mock');
 
 Vue.use(VueQuillEditor, /* { default global options } */);
 
@@ -28,6 +28,8 @@ Vue.use(Lazyload);
 // 挂载全局
 Vue.prototype.$http = http; // ajax请求方法
 Vue.prototype.$userAgent = userAgent;
+
+console.log(store)
 
 new Vue({
   router,

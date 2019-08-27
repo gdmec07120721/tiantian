@@ -1,21 +1,8 @@
-<style>
-.article-share > ul{display: flex; align-items: center; justify-content: center; padding: 0 0 0 15px;}
-.article-share > ul > li {padding: 10px 15px 15px 0;}
-.article-share > ul > li > span {display: inline-block; width: 55px; height: 55px; background-size: contain; background-repeat: no-repeat; }
-.share-pyq {background: url(../assets/images/share-pyq.png)}
-.share-weixin {background: url(../assets/images/share-weixin.png); height: 43px !important;}
-.share-qq {background: url(../assets/images/share-qq.png)}
-.share-weibo {background: url(../assets/images/share-weibo.png); height: 45px !important;}
-.share-qqkj {background: url(../assets/images/share-qqkj.png);}
-.article-share-title {padding: 15px;}
-.article-share-close {position: absolute; font-size: 18px; right: 15px; top: 20px;}
-</style>
-
 <template>
   <div class="page">
-    <!-- <div class="preview-header"></div>
-    <the-article-content :options="article" :contenteditable="true" />
-    <the-article-footer :show-share-btn="true" @on-submit="submit" /> -->
+    <div class="preview-header" @click="toAddCard"></div>
+    <the-article-content class="mt-lg" :options="article" :contenteditable="true" />
+    <the-article-footer :show-share-btn="true" @on-submit="submit" />
     <van-popup
       v-model="show_share_dialog"
       round
@@ -43,7 +30,7 @@ import TheArticleContent from '@/views/common/TheArticleContent';
 import TheArticleFooter from '@/views/common/TheArticleFooter';
 
 export default {
-  name: 'ArticlePreview',
+  name: 'ArticleEdit',
   components: { TheArticleContent, TheArticleFooter },
   data() {
     return {
@@ -67,19 +54,22 @@ export default {
           // 用户取消分享后执行的回调函数
         }
       },
-      show_share_dialog: true
+      show_share_dialog: false
     };
   },
   computed: {
     business_card_id() {
-      return this.$store.articleCard.business_card.business_card_id;
+      return this.$store.state.articleCard.business_card.business_card_id;
     },
     banner_ad_id() {
-      return this.$store.articleBanner.banner_ad.banner_ad_id;
+      return this.$store.state.articleBanner.banner_ad.banner_ad_id;
     },
     news_id() {
-      return this.$router.params.id;
+      return this.$route.params.id;
     }
+  },
+  created() {
+    this.queryArticleDetail();
   },
   mounted() {
     // wx.ready(function () {
@@ -90,6 +80,9 @@ export default {
     // });
   },
   methods: {
+    getCardAndBannerId() {
+
+    },
     queryArticleDetail() {
       this.$http({
         url: this.$http.adornUrl('/news/query_publish_news_info'),
@@ -106,6 +99,9 @@ export default {
           }
         });
     },
+    toAddCard() {
+      this.$router.push({ name: 'adAdd', params: { id: this.news_id }});
+    },
     submit() {
       if (!this.business_card_id) {
         this.$dialog.confirm({
@@ -114,7 +110,7 @@ export default {
         }).then(() => {
           this.confirmSubmit();
         }).catch(() => {
-          // on cancel
+          
         });
       }
     },
@@ -135,7 +131,7 @@ export default {
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.show_hare_dialog = true;
+            this.show_share_dialog = true;
           } else {
             this.$toast(res.retmsg);
           }
@@ -147,3 +143,17 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.preview-header {width: 100%; height: 60px; background: url('../assets/images/add-ad-banner.png') no-repeat; background-size: 100% 60px;} 
+.article-share > ul{display: flex; align-items: center; justify-content: center; padding: 0 0 0 15px;}
+.article-share > ul > li {padding: 10px 15px 15px 0;}
+.article-share > ul > li > span {display: inline-block; width: 40px; height: 40px; background-size: contain; background-repeat: no-repeat; }
+.share-pyq {background: url(../assets/images/share-pyq.png)}
+.share-weixin {background: url(../assets/images/share-weixin.png); height: 32px !important;}
+.share-qq {background: url(../assets/images/share-qq.png)}
+.share-weibo {background: url(../assets/images/share-weibo.png); height: 32px !important;}
+.share-qqkj {background: url(../assets/images/share-qqkj.png);}
+.article-share-title {padding: 15px; margin: 0;}
+.article-share-close {position: absolute; font-size: 18px; right: 15px; top: 20px;}
+</style>

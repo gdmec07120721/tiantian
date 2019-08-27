@@ -11,14 +11,8 @@
       </van-swipe>
     </div>
     <div class="content">
-      <van-grid 
-        :border="false"
-        :column-num="3"
-      >
-        <van-grid-item
-          v-for="(item, index) in grids"
-          :key="index"
-        >
+      <van-grid :border="false" :column-num="3">
+        <van-grid-item v-for="(item, index) in grids" :key="index">
           <van-image class="grid-item-image" :src="item.image" />
           <span class="grid-item-text">{{ item.name }}</span>
         </van-grid-item>
@@ -31,73 +25,47 @@
           :title="tab"
         >
           <div class="van-tabs-content">
-            <van-list
-              v-model="loading"
-              :finished="finished"
-              finished-text="没有更多了"
-              :error.sync="error"
-              error-text="请求失败，点击重新加载"
-              @load="listLoad"
-            >
-              <ul class="tabs-content-wrap">
-                <li 
-                  v-for="item in new_list" 
-                  :key="item.news_id" 
-                  class="van-hairline--bottom"
-                  @click="toArticle(item)"
-                >
-                  <van-image
-                    class="tabs-content-left"
-                    width="224"
-                    fit="contain"
-                    :src="item.news_image_url"
-                  />
-                  <div class="tabs-content-right">
-                    <h3>{{ item.news_headline }}</h3>
-                    <div class="content-right-footer">
-                      <div>03/10  16:00</div>
-                      <div class="tabs-share-wrap">
-                        <van-icon name="share" /> 
-                        <span>推广获客</span>
+            <van-pull-refresh v-model="loading" @refresh="refreshList">
+              <van-list
+                v-model="loading"
+                :finished="finished"
+                finished-text="没有更多了"
+                @load="queryList"
+              >
+                <van-cell v-for="item in new_list" :key="item.news_id" @click="toArticle(item)">
+                  <div class="tabs-content-wrap">
+                    <van-image
+                      class="tabs-content-left"
+                      width="112"
+                      fit="contain"
+                      :src="item.news_image_url"
+                    />
+                    <div class="tabs-content-right">
+                      <h3>{{ item.news_headline }}</h3>
+                      <div class="content-right-footer">
+                        <div>03/10  16:00</div>
+                        <div class="tabs-share-wrap">
+                          <van-icon name="share" /> 
+                          <span>推广获客</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </li>
-              </ul>
-            </van-list>
-            <!-- <van-pull-refresh v-model="is_loading" @refresh="refreshList">
-              <ul class="tabs-content-wrap">
-                <li v-for="item in new_list" :key="item.news_id" class="van-hairline--bottom">
-                  <van-image
-                    class="tabs-content-left"
-                    width="224"
-                    fit="contain"
-                    :src="item.news_image_url"
-                  />
-                  <div class="tabs-content-right">
-                    <h3>{{news_headline}}</h3>
-                    <div class="content-right-footer">
-                      <div>03/10  16:00</div>
-                      <div class="tabs-share-wrap">
-                        <van-icon name="share" /> 
-                        <span>推广获客</span>
-                      </div>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </van-pull-refresh> -->
+                </van-cell>
+              </van-list>
+            </van-pull-refresh>
           </div>
         </van-tab>
-        <van-icon name="plus" class="van-tab-add" @click="toAdAdd" />
+        <van-icon name="plus" class="van-tab-add" @click="toAddKeys" />
       </van-tabs>
     </div>
+    <van-button class="add-article-btn" round type="danger" icon="plus" @click="addArticle" />
     <div class="footer">
-      <van-tabbar v-model="active" active-color="#F1413D">
-        <van-tabbar-item icon="hot-o">热文</van-tabbar-item>
-        <van-tabbar-item icon="friends-o">客户</van-tabbar-item>
-        <van-tabbar-item icon="bar-chart-o">数据</van-tabbar-item>
-        <van-tabbar-item icon="manager-o">我的</van-tabbar-item>
+      <van-tabbar v-model="tab_active" active-color="#F1413D">
+        <van-tabbar-item to="/index" icon="hot-o">热文</van-tabbar-item>
+        <van-tabbar-item to="/search" icon="friends-o">客户</van-tabbar-item>
+        <van-tabbar-item to="/data" icon="bar-chart-o">数据</van-tabbar-item>
+        <van-tabbar-item to="/mine" icon="manager-o">我的</van-tabbar-item>
       </van-tabbar>
     </div>
   </div>
@@ -110,7 +78,7 @@ export default {
       limit: 10,
       total_num: 0,
       page_num: 1,
-      pages: 3, //总页数
+      pages: 0, //总页数
       new_list: [],
       swipes: {
         0: require('@/assets/images/banner-1.png'),
@@ -137,22 +105,18 @@ export default {
         4: '企业制定'
       },
       loading: false,
-      finished: false,
-      error: false
+      finished: false
     };
   },
   watch: {
     tab_active(nv) {
-      this.page_num = 1;
-      this.loading = false;
-      this.finished = false;
-      this.queryList();
+      this.refreshList();
     }
   },
+  created() {
+    this.queryList();
+  },
   methods: {
-    listLoad() {
-      this.finished = true;
-    },
     queryList() {
       this.$http({
         url: this.$http.adornUrl('/news/query_publish_news_list'),
@@ -165,27 +129,55 @@ export default {
       })
         .then(res => {
           this.loading = false;
-
           if (res && res.retcode == 0) {
-            this.new_list = res.result_rows || [];
-            this.error = false;
+            this.new_list = [...this.new_list, ...res.result_rows];
+            this.page_num = res.page_num < res.pages ? res.page_num + 1 : res.page_num;
+
           } else {
-            this.list = [];
+            this.new_list = [];
             this.$toast(res.retmsg);
-            this.error = true;
+          }
+
+          if (this.new_list.length >= res.total_num) {
+            this.finished = true;
           }
         });
     },
     refreshList() {
       this.page_num = 1;
+      this.new_list = [];
+      this.loading = false;
+      this.finished = false;
       this.queryList();
     },
-    toAdAdd() {
-      this.$router.push({ name: 'adAdd' });
+    addArticle() {
+      this.$router.push({ name: 'articleAdd' });
     },
     toArticle(item) {
-      this.$router.push({ name: 'article', params: { id: item.news_id }});
+      this.$router.push({ name: 'articleEdit', params: { id: item.news_id }});
+    },
+    toAddKeys() {
+      this.$router.push({ name: 'keysMake' });
     }
   }
 };
 </script>
+
+<style scoped>
+.swipe-item {width: 100%; line-height: 145px; height: 145px; display: block;}
+.grid-item-image >>> img {width: 20px;}
+.grid-item-text {font-size: 12px; padding-top: 11px;}
+.van-tabs-wrap {position: relative;  background: #fff;}
+.van-tabs-wrap >>> .van-tabs__nav {width: 90%; }
+.van-tab-add {display: flex; width: 16px; height: 16px; background: #F1413D; color: #fff; text-align: center; border-radius: 4px; align-items: center; justify-content: center; position: absolute; right: 15px; top:13px;}
+.van-tab-add:before {font-size: 12px; height: 12px;}
+.van-tabs-content {position: fixed; top: 267px; bottom: 50px; z-index: 0; overflow: auto; left: 0; right: 0;}
+.tabs-content-wrap{width: 100%; display: flex; align-items: stretch;}
+.tabs-content-right{display: flex; flex-direction: column; align-content: space-around; justify-content: space-between; margin-left: 10px; flex: 1;}
+.tabs-content-right h3 {font-size: 15px; text-align: left; font-weight: 400; margin: 0;}
+.content-right-footer {font-size: 12px; display: flex; justify-content: space-between; color: #A6A6A6;}
+.tabs-share-wrap {color: #F1413D;}
+.tabs-share-wrap i {height: 12px; line-height: 15px; margin-right: 4px;}
+.tabs-share-wrap span, .tabs-share-wrap i{display: inline-block; vertical-align: middle;}
+.add-article-btn {position: fixed; bottom: 60px; right: 20px; width: 50px; height: 50px; font-size: 20px; padding: 0;}
+</style>

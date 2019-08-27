@@ -1,12 +1,23 @@
 <style scoped>
-.article-content {top: 130px;}
+.article-footer-ad >>> img {width: 100%;}
+.article-inster {position: fixed; right: 0; bottom: 70px;}
+.article-inster-btn {border-radius: 30px 0 0 30px;}
 </style>
 
 <template>
   <div class="page">
     <component :is="card_type_config[user_business_card.card_type]" :options="user_business_card" />
-    <the-article-content class="article-content" :options="article" :contenteditable="true" />
-    <the-article-footer />
+    <the-article-content class="mt-lg" :options="article" />
+    <div class="article-footer mt-lg">
+      <van-image
+        class="article-footer-ad"
+        height="85"
+        :src="banner_ad_info.ad_image_url"
+      />
+    </div>
+    <div class="article-inster">
+      <van-button type="danger" size="small" class="article-inster-btn" @click="toInster">插入我的名片</van-button>
+    </div>
   </div>
 </template>
 
@@ -26,14 +37,15 @@ export default {
       user_business_card: {
         card_type: 0
       },
+      banner_ad_info: {},
       article: {
-        content: 'sadasdsadas<img src="https://img.yzcdn.cn/vant/cat.jpeg" />'
+        content: '<img src="https://img.yzcdn.cn/vant/cat.jpeg" />'
       }
     };
   },
   computed: {
     new_id() {
-      return this.$store;
+      return this.$route.params.id;
     }
   },
   created() {
@@ -42,21 +54,26 @@ export default {
   methods: {
     queryDetail() {
       this.$http({
-        url: this.$http.adornUrl('/news/query_publish_news_info'),
-        method: 'post',
+        url: this.$http.adornUrl('/news/query_user_own_news'),
+        method: 'get',
         data: this.$http.adornParams({
           new_id: this.new_id
         })
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.article = res.result_rows[0];
-            this.user_business_card = res.result_rows[0].user_business_card;
+            let resp = res.result_rows[0];
+            this.article = resp;
+            this.user_business_card = resp.user_business_card;
+            this.banner_ad_info = resp.banner_ad_info;
             // TODO 页脚广告是否可以在不同位置 是否有点击效果 是否有广告内容???
           } else {
             this.$toast(res.retmsg);
           }
         });
+    },
+    toInster() {
+      this.$router.push({ name: 'articleEdit', params: { id: this.news_id }});
     }
   }
 };

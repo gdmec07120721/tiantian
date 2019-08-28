@@ -14,4 +14,7 @@
 
   //微信appId
   window.SITE_CONFIG['weixin_appid']  = 'wxd5c2cc2ea615ff8e'; 
+
+  //微信secret
+  window.SITE_CONFIG['weixin_secret']  = 'wxd5c2cc2ea615ff8e'; 
 })();

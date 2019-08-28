@@ -66,6 +66,9 @@ export default {
     },
     news_id() {
       return this.$route.params.id;
+    },
+    uid() {
+      return this.$store.state.user.user.uid;
     }
   },
   created() {
@@ -100,7 +103,11 @@ export default {
         });
     },
     toAddCard() {
-      this.$router.push({ name: 'adAdd', params: { id: this.news_id }});
+      if (this.uid) {
+        this.$router.push({ name: 'adAdd', params: { id: this.news_id }});
+      } else {
+        this.$router.push({ name: 'login' });
+      }
     },
     submit() {
       if (!this.business_card_id) {

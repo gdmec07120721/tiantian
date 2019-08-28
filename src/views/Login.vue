@@ -16,31 +16,36 @@
       <h3>天天推</h3>
     </div>
     <div class="login-ctn">
-      <div v-if="false" class="login-ctn-wrap">
+      <div v-if="!is_verify" class="login-ctn-wrap">
         <h3>欢迎加入</h3>
         <van-cell-group class="pt-lg" :border="false">
           <van-field
-            v-model="phone"
+            v-model="mobile"
             placeholder="请输入手机号"
-            error-message="手机号格式错误"
+            :error-message="error_message"
             left-icon="phone-o"
+            type="tel"
+            :maxlength="11"
           />
-          <van-button type="danger" size="large" class="login-btn">下一步</van-button>
+          <van-button type="danger" size="large" class="login-btn" @click="sendMobile">下一步</van-button>
         </van-cell-group>
       </div>
-      <div class="login-ctn-wrap login-code">
+      <div v-else class="login-ctn-wrap login-code">
         <p class="mb-0">已发送验证码到</p>
-        <h3>18633456789</h3>
+        <h3>{{ mobile }}</h3>
         <van-cell-group class="pt-lg" :border="false">
           <van-field
-            v-model="phone"
+            v-model="verify_code"
             placeholder="请输入验证码"
             left-icon="comment-o"
+            type="number"
+            :maxlength="4"
           >
-            <span slot="button" class="login-code-time">重新发送（60）</span>
+            <van-button v-if="countdown == 60" slot="button" size="small" type="danger" @click="sendMobile">发送验证码</van-button>
+            <span v-else slot="button" class="login-code-time">重新发送（{{ countdown }}）</span>
           </van-field>
           <p class="text-info text-left text-xxs pxy-sm">收不到验证码点这里</p>
-          <van-button type="danger" size="large" class="login-btn">下一步</van-button>
+          <van-button type="danger" size="large" class="login-btn" @click="verifyCode">下一步</van-button>
         </van-cell-group>
       </div>
     </div>
@@ -52,8 +57,91 @@ export default {
   name: 'Login',
   data() {
     return {
-      phone: ''
+      mobile: '',
+      uid: '',
+      verify_code: '',
+      countdown: 60,
+      error_message: '',
+      countdown_interval: null,
+      is_verify: false
     };
+  },
+  computed: {
+    redirect_uri() {
+      return this.$route.query.redirect_uri;
+    }
+  },
+  destroyed() {
+    window.clearInterval(this.countdown_interval);
+  },
+  created () {
+    console.log(this.$route);
+  },
+  methods: {
+    sendMobile() {
+      if (!this.mobile || !(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.mobile))) {
+        this.error_message = '请输入正确格式的手机号码';
+        return false;
+      }
+
+      this.$http({
+        url: this.$http.adornUrl('/user/send_message_to_mobile'),
+        method: 'post',
+        data: this.$http.adornParams({
+          open_id: sessionStorage.getItem('openid'),
+          mobile: this.mobile
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            this.uid = res.result_rows[0].uid;
+            this.is_verify = true;
+            this.toDoCountdown();
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
+    },
+    verifyCode() {
+      if (!this.verify_code) {
+        return false;
+      }
+
+      this.$http({
+        url: this.$http.adornUrl('/user/verify_code'),
+        method: 'post',
+        data: this.$http.adornParams({
+          uid: this.uid,
+          verify_code: this.verify_code
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            let user = { uid: this.uid };
+            console.log(user);
+            this.$store.commit('user/updatedUser', user);
+            sessionStorage.setItem('user', JSON.stringify(user));
+            this.$router.replace({ path: this.redirect_uri });
+          } else {
+            this.$toast(res.retmsg);
+            this.mobile = '';
+            this.verify_code = '';
+            this.countdown = 60;
+            this.is_verify = false;
+          }
+        });
+    },
+    toDoCountdown() {
+      this.countdown = this.countdown - 1;
+      this.countdown_interval = window.setInterval(() => {
+        if (this.countdown > 0) {
+          this.countdown = this.countdown - 1;
+        } else {
+          this.countdown = 60;
+          window.clearInterval(this.countdown_interval);
+        }
+      }, 1000);
+    }
   }
 };
 </script>

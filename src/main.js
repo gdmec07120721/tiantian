@@ -29,8 +29,6 @@ Vue.use(Lazyload);
 Vue.prototype.$http = http; // ajax请求方法
 Vue.prototype.$userAgent = userAgent;
 
-console.log(store)
-
 new Vue({
   router,
   store,

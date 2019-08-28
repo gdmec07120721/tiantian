@@ -138,3 +138,17 @@ Mock.mock(/\/user\/add_user_ad/, {
   'retmsg': 'success'
 });
 
+Mock.mock(/\/user\/send_message_to_mobile/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'result_rows': [{
+    'uid': 1 //用户Id
+  }]       
+});
+
+Mock.mock(/\/user\/verify_code/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'result_rows': []
+});
+

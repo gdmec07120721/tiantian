@@ -68,7 +68,7 @@ export default {
       return this.$route.params.id;
     },
     uid() {
-      return this.$store.state.user.user.uid;
+      return this.$store.getters['user/user'].uid || '';
     }
   },
   created() {
@@ -106,7 +106,7 @@ export default {
       if (this.uid) {
         this.$router.push({ name: 'adAdd', params: { id: this.news_id }});
       } else {
-        this.$router.push({ name: 'login' });
+        this.$router.push({ path: '/login', query: { redirect_uri: this.$route.fullPath }});
       }
     },
     submit() {

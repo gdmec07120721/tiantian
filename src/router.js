@@ -13,7 +13,7 @@ const router = new Router(routes);
 
 router.beforeEach((to, from, next) => {
   next();
- 
+  return false;
   let url_parse = url.parse(window.location.href);
   let code = queryString.parse(url_parse.query).code || to.query.code;
   let state = queryString.parse(url_parse.query).state || to.query.state;

@@ -75,23 +75,19 @@
         </van-list>
       </van-pull-refresh>
     </div>
-    <div class="footer">
-      <van-tabbar v-model="tab_active" active-color="#F1413D">
-        <van-tabbar-item to="/index" icon="hot-o">热文</van-tabbar-item>
-        <van-tabbar-item to="/search" icon="friends-o">客户</van-tabbar-item>
-        <van-tabbar-item to="/data" icon="bar-chart-o">数据</van-tabbar-item>
-        <van-tabbar-item to="/mine" icon="manager-o">我的</van-tabbar-item>
-      </van-tabbar>
-    </div>
+    <the-footer :tab-actived="footer_active" />
   </div>
 </template>
 
 <script>
+import TheFooter from '@/views/common/TheFooter';
+
 export default {
   name: 'Data',
+  components: { TheFooter },
   data() {
     return {
-      tab_active: 2,
+      footer_active: 2,
       list: [],
       loading: false,
       finished: false

@@ -12,24 +12,18 @@
         </div>
       </van-tab>
     </van-tabs>
-    <div class="footer">
-      <van-tabbar v-model="tab_active" active-color="#F1413D">
-        <van-tabbar-item to="/index" icon="hot-o">热文</van-tabbar-item>
-        <van-tabbar-item to="/search" icon="friends-o">客户</van-tabbar-item>
-        <van-tabbar-item to="/data" icon="bar-chart-o">数据</van-tabbar-item>
-        <van-tabbar-item to="/mine" icon="manager-o">我的</van-tabbar-item>
-      </van-tabbar>
-    </div>
+    <the-footer :tab-actived="footer_active" />
   </div>
 </template>
 
 <script>
 import MineMine from '@/views/mine/Mine';
 import MineHotList from '@/views/mine/HotList';
+import TheFooter from '@/views/common/TheFooter';
 
 export default {
   name: 'Mine',
-  components: { MineMine, MineHotList },
+  components: { MineMine, MineHotList, TheFooter },
   data() {
     return {
       mine_active: 0,
@@ -38,7 +32,7 @@ export default {
         1: '热榜'
       },
       mines: ['MineMine', 'MineHotList'],
-      tab_active: 3
+      footer_active: 3
     };
   }
 };

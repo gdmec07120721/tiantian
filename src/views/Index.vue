@@ -21,7 +21,7 @@
         <van-tab 
           v-for="(tab, index) in tabs"
           :key="index" 
-          v-model="tab_active" 
+          v-model="footer_active" 
           :title="tab"
         >
           <div class="van-tabs-content">
@@ -60,19 +60,15 @@
       </van-tabs>
     </div>
     <van-button class="add-article-btn" round type="danger" icon="plus" @click="addArticle" />
-    <div class="footer">
-      <van-tabbar v-model="tab_active" active-color="#F1413D">
-        <van-tabbar-item to="/index" icon="hot-o">热文</van-tabbar-item>
-        <van-tabbar-item to="/search" icon="friends-o">客户</van-tabbar-item>
-        <van-tabbar-item to="/data" icon="bar-chart-o">数据</van-tabbar-item>
-        <van-tabbar-item to="/mine" icon="manager-o">我的</van-tabbar-item>
-      </van-tabbar>
-    </div>
+    <the-footer :tab-actived="footer_active" />
   </div>
 </template>
 
 <script>
+import TheFooter from '@/views/common/TheFooter';
+
 export default {
+  components: { TheFooter },
   data() {
     return {
       limit: 10,
@@ -96,7 +92,7 @@ export default {
         image: require('@/assets/images/icon-agent.png')
 
       }],
-      tab_active: 0,
+      footer_active: 0,
       tabs: {
         0: '推荐',
         1: '资讯',
@@ -109,7 +105,7 @@ export default {
     };
   },
   watch: {
-    tab_active(nv) {
+    footer_active(nv) {
       this.refreshList();
     }
   },
@@ -124,7 +120,7 @@ export default {
         data: this.$http.adornParams({
           limit: this.limit,
           page_num: this.page_num,
-          new_type: this.tab_active
+          new_type: this.footer_active
         })
       })
         .then(res => {

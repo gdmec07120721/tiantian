@@ -9,6 +9,8 @@
 .mine-list,
 .mine-no-list {margin-top: 115px;}
 .mine-list-title {font-size: 12px;}
+.mine-list {padding-bottom: 30px;}
+.mine-list >>> .van-cell {padding-top: 0; padding-bottom: 0;}
 .mine-empty {text-align: center; color: #666666;}
 .mine-empty img {display: block; width: 70%; margin: 32px auto;}
 .mine-info {display: flex; justify-content: space-between; padding: 8px; background: #fff; border-radius: 4px; align-items: center;}
@@ -23,76 +25,78 @@
   <div class="mine">
     <ul class="mine-data">
       <li class="van-hairline--right">
-        <h3 class="text-info">100</h3>
+        <h3 class="text-info">{{ statistics.expose_cnt }}</h3>
         <p>曝光数</p>
       </li>
       <li class="van-hairline--right">
-        <h3 class="text-info">100</h3>
+        <h3 class="text-info">{{ statistics.click_cnt }}</h3>
         <p>点击量</p>
       </li>
       <li>
-        <h3 class="text-info">100</h3>
+        <h3 class="text-info">{{ statistics.forward_cnt }}</h3>
         <p>转发量</p>
       </li>
     </ul>
-
-    <div v-if="false" class="mine-list">
-      <van-pull-refresh v-model="loading" @refresh="refreshList">
-        <van-list
-          v-model="loading"
-          :finished="finished"
-          finished-text="没有更多了"
-          @load="onLoad"
-        >
-          <van-cell
-            v-for="item in list"
-            :key="item"
+    <template>
+      <div v-if="list.lenght != 0" class="mine-list">
+        <van-pull-refresh v-model="loading" @refresh="refreshList">
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            @load="onLoad"
           >
-            <h3 class="mb-0 mt-sm mine-list-title">《华谊兄弟终止收购，英雄互娱或转主，华谊最新消息！》</h3>
-            <p class="mine-sub-info mt-0 pxy-xs">
-              <span>
-                <van-icon name="mine-icon description" />
-                <span>阅读数 100</span>
-              </span>
-              <span>
-                <i class="mine-icon iconfont icon-gongdanguanli-gongda"></i>
-                <span>点击量 10</span>
-              </span>
-              <span>
-                <van-icon class="mine-icon" name="share" />
-                <span>转发量 20</span>
-              </span>
-            </p>
-          </van-cell>
-        </van-list>
-      </van-pull-refresh>
-    </div>
-
-    <div class="mine-no-list container">
-      <div class="mine-empty">
-        <img src="../../assets/images/icon-empty.png">
-        <p>客户就在你身边，只是你没发现</p>
-        <p>分享好的广告追踪你的客户</p>
+            <van-cell
+              v-for="item in list"
+              :key="item.news_headline"
+            >
+              <h3 class="mb-0 mt-sm mine-list-title">《{{ item.news_headline }}》</h3>
+              <p class="mine-sub-info mt-0 pxy-xs">
+                <span>
+                  <van-icon name="mine-icon description" />
+                  <span>阅读数 {{ item.expose_num }}</span>
+                </span>
+                <span>
+                  <i class="mine-icon iconfont icon-gongdanguanli-gongda"></i>
+                  <span>点击量 {{ item.click_num }}</span>
+                </span>
+                <span>
+                  <van-icon class="mine-icon" name="share" />
+                  <span>转发量 {{ item.forward_num }}</span>
+                </span>
+              </p>
+            </van-cell>
+          </van-list>
+        </van-pull-refresh>
       </div>
-    </div>
 
-    <div class="mine-info mt-lg">
-      <div class="mine-info-left">
-        <van-image
-          width="44px"
-          height="44px"
-          fit="cover"
-          round
-          src="https://img.yzcdn.cn/vant/cat.jpeg"
-        />
-        <span>南无</span>
-      </div>
-      <van-tag round type="danger" class="mine-info-tag">
-        <van-icon name="medel" class="mine-info-medel" />
-        <span>已获客793次</span>
-      </van-tag>
-    </div>
+      <template v-else>
+        <div class="mine-no-list container">
+          <div class="mine-empty">
+            <img src="../../assets/images/icon-empty.png">
+            <p>客户就在你身边，只是你没发现</p>
+            <p>分享好的广告追踪你的客户</p>
+          </div>
+        </div>
 
+        <div class="mine-info mt-lg">
+          <div class="mine-info-left">
+            <van-image
+              width="44px"
+              height="44px"
+              fit="cover"
+              round
+              src="https://img.yzcdn.cn/vant/cat.jpeg"
+            />
+            <span>南无</span>
+          </div>
+          <van-tag round type="danger" class="mine-info-tag">
+            <van-icon name="medel" class="mine-info-medel" />
+            <span>已获客793次</span>
+          </van-tag>
+        </div>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -101,29 +105,71 @@ export default {
   name: 'MineMine',
   data() {
     return {
+      page: 1,
       list: [],
+      statistics: {},
       loading: false,
       finished: false
     };
   },
+  computed: {
+    uid() {
+      return this.$store.getters['user/user'].uid;
+    }
+  },
+  created() {
+    this.getuserNewsStatistics();
+  },
   methods: {
+    getuserNewsStatistics() {
+      this.$http({
+        url: this.$http.adornUrl('/user/user_news_statistics'),
+        method: 'get',
+        data: this.$http.adornParams({
+          uid: this.uid
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            this.statistics = res.result_rows[0];
+          } else {
+            this.statistics = {};
+            this.$toast(res.retmsg);
+          }
+        });
+    },
     onLoad() {
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        // 加载状态结束
-        this.loading = false;
+      this.$http({
+        url: this.$http.adornUrl('/user/page_query_user_click_user_news'),
+        method: 'get',
+        data: this.$http.adornParams({
+          limit: 10,
+          page: this.page,
+          uid: this.uid
+        })
+      })
+        .then(res => {
+          this.loading = false;
+          if (res && res.retcode == 0) {
+            this.list = [...this.list, ...res.result_rows];
+            this.page = this.page < res.total_page ? this.page + 1 : res.total_page;
 
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 500);
+          } else {
+            this.list = [];
+            this.$toast(res.retmsg);
+          }
+
+          if (this.list.length >= res.total_num) {
+            this.finished = true;
+          }
+        });
     },
     refreshList() {
-      
+      this.page = 1;
+      this.list = [];
+      this.loading = false;
+      this.finished = false;
+      this.onLoad();
     }
   }
 };

@@ -152,3 +152,69 @@ Mock.mock(/\/user\/verify_code/, {
   'result_rows': []
 });
 
+Mock.mock(/\/user\/user_news_statistics/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'result_rows': [
+    {
+      'save_ad_cost': 1111, //节约广告费
+      'profit': 500, //收益
+      'expose_cnt': 500, //曝光数
+      'click_cnt': 500, //点击量
+      'forward_cnt': 500 //转发量
+    }
+  ]
+});
+
+Mock.mock(/\/user\/page_query_user_click_user_news/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'total_num': 10,       //总数
+  'total_page': 2,       //总页数
+  'page': 2,             //当前页数
+  'limit': 10,           //每页大小
+  'result_rows': [
+    {
+      'news_headline': '生活大爆炸', //新闻标题
+      'expose_num': 500, //阅读数
+      'click_num': 500, //点击量
+      'forward_num': 500 //转发量
+    }
+  ]
+});
+
+Mock.mock(/\/user\/user_data_cnt/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'result_rows': [
+    {
+      'today_cnt': 11, //今日查看总数
+      'history_cnt': 500 //看我总数
+    }
+  ]
+});
+
+
+
+Mock.mock(/\/user\/page_query_click_user_news/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'total_num': 10,       //总数
+  'total_page': 2,       //总页数
+  'page': 2,             //当前页数
+  'limit': 10,           //每页大小
+  'result_rows': [
+    {
+      'news_headline': '生活大爆炸', //新闻标题
+      'we_chat_nickname': '小冰', //昵称
+      'action_type': 1 //用户行为 1:查看新闻 2 点击广告
+    },
+    {
+      'news_headline': '生活大爆炸', //新闻标题
+      'we_chat_nickname': '小冰', //昵称
+      'action_type': 2 //用户行为 1:查看新闻 2 点击广告
+    }
+  ]
+});
+
+

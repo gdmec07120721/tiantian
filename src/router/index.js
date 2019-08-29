@@ -4,7 +4,11 @@ const routes = {
   routes: [
     {
       path: '/',
-      name: 'home',
+      redirect: { name: 'index' }
+    },
+    {
+      path: '/index',
+      name: 'index',
       component: Index
     },
     {
@@ -37,7 +41,8 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '@/views/AdAdd.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/AdAdd.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/keysMake',
@@ -45,7 +50,8 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '@/views/KeysMake.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/KeysMake.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/mine',
@@ -53,7 +59,8 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Mine.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/Mine.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/data',
@@ -61,7 +68,8 @@ const routes = {
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Data.vue')
+      component: () => import(/* webpackChunkName: "about" */ '@/views/Data.vue'),
+      meta: { requiresAuth: true }
     },
     {
       path: '/login',

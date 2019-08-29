@@ -72,9 +72,7 @@ export default {
   data() {
     return {
       limit: 10,
-      total_num: 0,
       page_num: 1,
-      pages: 0, //总页数
       new_list: [],
       swipes: {
         0: require('@/assets/images/banner-1.png'),

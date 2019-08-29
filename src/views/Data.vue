@@ -53,7 +53,7 @@
           @load="onLoad"
         >
           <van-cell
-            v-for="(item, index) in list"
+            v-for="item in list"
             :key="item.we_chat_nickname"
             class="data-list-item"
           >

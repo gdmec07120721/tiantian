@@ -19,8 +19,8 @@
         </template>
         <van-image
           v-else
+          height="88"
           fit="cover"
-          round
           :src="params.ad_pic_url"
         />
       </van-uploader>
@@ -57,11 +57,11 @@
         </li>
         <li>
           <p>
-            <van-icon name="phone-o" color="#D0CECE" style="line-height: inherit;" />
+            <van-icon name="phone-o" color="#E4211B" style="line-height: inherit; margin-right: 8px;" />
             <span>添加电话</span>
           </p>
           <div class="banner-item-ctx">
-            <van-field v-model="params.mobile" class="van-hairline--surround field-input" />
+            <van-field v-model="params.mobile" :maxlength="11" type="tel" class="van-hairline--surround field-input" />
           </div>
         </li>
       </ul>
@@ -73,6 +73,8 @@
 </template>
 
 <script>
+import { isURL, isPhoneNumber } from '@/utils/index';
+
 export default {
   name: 'Banner',
   props: {
@@ -120,6 +122,14 @@ export default {
         });
     },
     save() {
+      if (!isPhoneNumber(this.params.mobile)) {
+        this.$toast('请输入正确格式的手机号码');
+        return false;
+      } else if (!isURL(this.params.jump_link)) {
+        this.$toast('请输入正确的链接');
+        return false; 
+      }
+
       let params = Object.assign({}, this.params, {
         uid: this.uid,
         ad_type: 2

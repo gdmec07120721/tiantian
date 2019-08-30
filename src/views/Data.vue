@@ -8,12 +8,13 @@
 .data-total-num {font-size: 28px; font-weight: bold;}
 .data-ad img {width: 100%; display: block;}
 .data-list {position: absolute; top: 170px; bottom: 50px; left: 15px; right: 15px; overflow: auto;}
+.data-list-item {padding: 15px;}
 .data-list-item >>> .van-cell__value {display: flex; align-items: center;}
 .data-list-item-img >>> img{border-radius: 4px;}
 .data-list-item span {display: inline-block; vertical-align: middle; white-space: nowrap; font-size: 12px;}
 .data-list-article {display: flex; align-items: center; width: 45%; position: relative;}
 .data-list-article-title {display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis;}
-.data-list-username {padding: 0 5px;}
+.data-list-username {padding: 0 5px; color: #399CFF;}
 @media screen and (max-width: 320px){
     .data-list-article {width: 35%;}
 }

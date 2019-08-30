@@ -1,6 +1,6 @@
 <template>
   <div class="preview-footer">
-    <div class="preview-ad-benner"></div>
+    <div class="preview-ad-benner" @click="toAddBanner"></div>
     <van-button v-if="showShareBtn" type="danger" class="preview-share-btn" @click="submit">即刻分享</van-button>
   </div>
 </template>
@@ -19,15 +19,12 @@ export default {
       return '';
     }
   },
-  created() {
-    this.queryAd();
-  },
   methods: {
     submit() {
       this.$emit('on-submit');
     },
-    queryAd() {
-      
+    toAddBanner() {
+      this.$emit('on-click');
     }
   }
 };

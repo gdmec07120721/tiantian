@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { isURL } from '@/utils/index';
 
 export default {
   name: 'ArticleAdd',
@@ -39,16 +40,11 @@ export default {
     };
   },
   methods: {
-    isURL(url) {
-      let strRegex = /^(https?:\/\/)([0-9a-z.]+)(:[0-9]+)?([/0-9a-z.]+)?(\?[0-9a-z&=]+)?(#[0-9-a-z]+)?/i;
-
-      return strRegex.test(url);
-    },
     submit() {
       if (!this.url) {
         this.$toast.fail('请粘贴链接');
         return false; 
-      } else if (!this.isURL(this.url)) {
+      } else if (!isURL(this.url)) {
         this.$toast.fail('请输入正确的链接');
         return false; 
       }
@@ -63,7 +59,7 @@ export default {
         .then(res => {
           if (res && res.retcode == 0) {
             setTimeout(() => {
-              this.$router.push({ name: 'articlePreview', params: { id: res.result_rows[0].news_id }});
+              this.$router.push({ name: 'articleEdit', params: { id: res.result_rows[0].news_id }});
             }, 500);
           } else {
             this.$toast(res.retmsg);

@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { isPhoneNumber } from '@/utils/index';
+
 export default {
   name: 'Login',
   data() {
@@ -79,7 +81,7 @@ export default {
   },
   methods: {
     sendMobile() {
-      if (!this.mobile || !(/^[1][3,4,5,7,8][0-9]{9}$/.test(this.mobile))) {
+      if (!this.mobile || !isPhoneNumber(this.mobile)) {
         this.error_message = '请输入正确格式的手机号码';
         return false;
       }

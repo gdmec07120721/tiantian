@@ -37,6 +37,9 @@ export default {
     new_id() {
       return this.$route.params.id;
     }
+  },
+  created() {
+    this.tab_active = this.$route.query.tab_active;
   }
 };
 </script>

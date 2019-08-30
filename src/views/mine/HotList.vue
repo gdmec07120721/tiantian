@@ -3,7 +3,7 @@
 .hot-list-tab {display: flex; border-radius: 4px; text-align: center; padding: 15px; position: fixed; left: 15px; right: 15px; z-index: 999; top: 70px; justify-content: space-around;}
 .hot-list-tab button {padding: 0 25px; line-height: 40px; height: 40px; }
 .hot-list-tab .van-button--plain {background: transparent;}
-.hot-list-wrap {margin-top: 73px;}
+.hot-list-wrap {margin-top: 73px; padding-bottom: 30px;}
 .hot-list-item {padding-top: 20px; padding-bottom: 20px;}
 .hot-list-item .van-cell__value,
 .hot-list-item .van-cell__value > span{display: flex; align-items: center; justify-content: space-around; flex: 1; font-size: 12px;}
@@ -35,7 +35,7 @@
         >
           <van-cell
             v-for="(item, index) in list"
-            :key="item"
+            :key="index"
             class="hot-list-item"
           >
             <span class="hot-list-item-num" :class="{'text-info': index < 3}" style="max-width: 15px;"><span>{{ index + 1 }}</span></span>

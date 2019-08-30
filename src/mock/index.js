@@ -233,7 +233,8 @@ Mock.mock(/\/user\/page_query_hot_day/, {
     {
       'news_headline': '生活大爆炸', //新闻标题
       'nickname': '小冰', //昵称
-      'expose_num': 500 //阅读数
+      'expose_num': 500, //阅读数
+      'expose_cnt': 100
     }
   ]
 });
@@ -249,7 +250,8 @@ Mock.mock(/\/user\/page_query_hot_month/, {
     {
       'news_headline': '生活大爆炸', //新闻标题
       'nickname': '小冰', //昵称
-      'expose_num': 500 //阅读数
+      'expose_num': 500, //阅读数
+      'expose_cnt': 100
     }
   ]
 });

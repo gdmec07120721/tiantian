@@ -114,7 +114,15 @@ export default {
         });
     },
     toAddCard() {
-      this.$router.push({ name: 'adAdd', params: { id: this.news_id }});
+      console.log('dsadasda');
+      this.$router.push({ 
+        name: 'adAdd', 
+        params: { 
+          id: this.news_id 
+        }, 
+        query: {
+          tab_active: 0
+        }});
     },
     submit() {
       if (!this.user_business_card.ad_id) {
@@ -161,6 +169,16 @@ export default {
             this.$toast(res.retmsg);
           }
         }); 
+    },
+    toAddBanner() {
+      this.$router.push({ 
+        name: 'adAdd', 
+        params: { 
+          id: this.news_id 
+        }, 
+        query: {
+          tab_active: 1
+        }});
     },
     share(type) {
 

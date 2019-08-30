@@ -61,6 +61,8 @@
         placeholder="请输入手机号码"
         label="手机号码"
         left-icon="phone-o"
+        :maxlength="11"
+        type="tel"
       />
     </van-cell-group>
     <van-cell-group title="名片样式" class="ad-add-card-type">
@@ -80,6 +82,8 @@
 </template>
 
 <script>
+import { isPhoneNumber } from '@/utils/index';
+
 export default {
   name: 'Card',
   data() {
@@ -121,6 +125,11 @@ export default {
         });
     },
     save() {
+      if (!this.params.mobile || !isPhoneNumber(this.params.mobile)) {
+        this.$toast('请输入正确格式的手机号码');
+        return false;
+      }
+
       let params = Object.assign({}, this.params, {
         uid: this.uid,
         ad_type: 1

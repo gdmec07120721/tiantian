@@ -82,12 +82,6 @@
 <script>
 export default {
   name: 'Card',
-  props: {
-    newsId: {
-      type: [String, Number],
-      default: ''
-    }
-  },
   data() {
     return {
       params: {
@@ -95,6 +89,11 @@ export default {
         user_head_portrait: require('../../assets/images/icon-banner-upload.png')
       }
     };   
+  },
+  computed: {
+    uid() {
+      return this.$store.getters['user/user'].uid;
+    }
   },
   methods: {
     beforeRead(file) {
@@ -122,28 +121,23 @@ export default {
         });
     },
     save() {
-
-      
       let params = Object.assign({}, this.params, {
-        news_id: this.newsId
+        uid: this.uid,
+        ad_type: 1
       });
 
       this.$http({
-        url: this.$http.adornUrl('/news/query_publish_news_info'),
+        url: this.$http.adornUrl('/user/add_user_ad'),
         method: 'post',
         data: this.$http.adornParams(params)
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.saveStore(params);      
+            this.$emit('on-card-save');      
           } else {
             this.$toast(res.retmsg);
           }
         });
-    },
-    saveStore(params) {
-      this.$store.commit('articleCard/saveBusinessCard', params);
-      this.$router.push({ name: 'articlePreview', params: { id: this.params.news_id }});
     }
   }
 };

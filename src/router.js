@@ -43,7 +43,7 @@ router.beforeEach((to, from, next) => {
               next();
             })
             .catch(errmsg => {
-              Toast('没有openid' + errmsg);
+              Toast('请关注企业号' + errmsg);
             }); 
         } else {
           toWeixin(to.fullPath);

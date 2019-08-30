@@ -38,7 +38,7 @@
             :key="item"
             class="hot-list-item"
           >
-            <span class="hot-list-item-num" :class="{'text-info': index < 3}" style="max-width: 15px;"><span>1</span></span>
+            <span class="hot-list-item-num" :class="{'text-info': index < 3}" style="max-width: 15px;"><span>{{ index + 1 }}</span></span>
             <van-image
               width="30px"
               height="30px"
@@ -46,16 +46,16 @@
               src="https://img.yzcdn.cn/vant/cat.jpeg"
             />
             <span style="max-width: 60px; padding-left: 3px;">
-              <span v-if="index < 3"><strong>东东asdasd枪</strong></span>
-              <span v-else>东东asdasd枪</span>
+              <span v-if="index < 3"><strong>{{ item.nickname }}</strong></span>
+              <span v-else>{{ item.nickname }}</span>
             </span>
             <span class="hot-list-item-text">
               <van-icon class="hot-list-item-icon" name="browsing-history" />
-              <span>曝光 800 次</span>
+              <span>曝光 {{ item.expose_cnt }} 次</span>
             </span>
             <span class="hot-list-item-text">
               <van-icon class="hot-list-item-icon" name="newspaper-o" />
-              <span>文章 800 篇</span>
+              <span>文章 {{ item.expose_num }} 篇</span>
             </span>
           </van-cell>
         </van-list>
@@ -74,32 +74,55 @@ export default {
         0: '3日排行榜', 
         1: '月度达人榜'
       },
+      page: 1,
       list: [],
       loading: false,
       finished: false
     };
+  },
+  watch: {
+    tab_actived(nv) {
+      this.refreshList();
+    }
   },
   methods: {
     changeTab(key) {
       this.tab_actived = key;
     },
     onLoad() {
-      // 异步更新数据
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
-        }
-        // 加载状态结束
-        this.loading = false;
+      let url = this.tab_actived == 0 ? '/user/page_query_hot_day' : '/user/page_query_hot_month';
 
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
-          this.finished = true;
-        }
-      }, 500);
+      this.$http({
+        url: this.$http.adornUrl(url),
+        method: 'get',
+        data: this.$http.adornParams({
+          limit: 10,
+          page: this.page,
+          uid: this.uid
+        })
+      })
+        .then(res => {
+          this.loading = false;
+          if (res && res.retcode == 0) {
+            this.list = [...this.list, ...res.result_rows];
+            this.page = this.page < res.total_page ? this.page + 1 : res.total_page;
+
+          } else {
+            this.list = [];
+            this.$toast(res.retmsg);
+          }
+
+          if (this.list.length >= res.total_num) {
+            this.finished = true;
+          }
+        });
     },
     refreshList() {
-      
+      this.page = 1;
+      this.list = [];
+      this.loading = false;
+      this.finished = false;
+      this.onLoad();
     }
   }
 };

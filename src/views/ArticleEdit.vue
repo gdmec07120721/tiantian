@@ -2,7 +2,7 @@
   <div class="page">
     <div class="preview-header" @click="toAddCard"></div>
     <the-article-content class="mt-lg" :options="article" :contenteditable="true" />
-    <the-article-footer :show-share-btn="true" @on-submit="submit" />
+    <the-article-footer :show-share-btn="true" @on-submit="submit" @on-click="toAddBanner" />
     <van-popup
       v-model="show_share_dialog"
       round
@@ -54,18 +54,17 @@ export default {
           // 用户取消分享后执行的回调函数
         }
       },
+      user_business_card: {},
+      banner_ad_info: {},
       show_share_dialog: false
     };
   },
   computed: {
-    business_card_id() {
-      return this.$store.state.articleCard.business_card.business_card_id;
-    },
-    banner_ad_id() {
-      return this.$store.state.articleBanner.banner_ad.banner_ad_id;
-    },
     news_id() {
       return this.$route.params.id;
+    },
+    uid() {
+      return this.$store.getters['user/user'].uid;
     }
   },
   created() {
@@ -81,7 +80,22 @@ export default {
   },
   methods: {
     getCardAndBannerId() {
-
+      this.$http({
+        url: this.$http.adornUrl('/user/page_query_user_ad'),
+        method: 'get',
+        data: this.$http.adornParams({
+          news_id: this.news_id
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            this.article = res.result_rows[0];
+            this.user_business_card = res.result_rows[0].user_business_card;
+            this.banner_ad_info = res.result_rows[0].banner_ad_info;
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
     },
     queryArticleDetail() {
       this.$http({
@@ -103,15 +117,26 @@ export default {
       this.$router.push({ name: 'adAdd', params: { id: this.news_id }});
     },
     submit() {
-      if (!this.business_card_id) {
+      if (!this.user_business_card.ad_id) {
         this.$dialog.confirm({
           title: '提示',
-          message: '名片广告暂未添加，确定分享吗？'
+          message: '名片暂未添加，确定分享吗？'
         }).then(() => {
           this.confirmSubmit();
         }).catch(() => {
           
         });
+      } else if (!this.banner_ad_info.ad_id) {
+        this.$dialog.confirm({
+          title: '提示',
+          message: '广告暂未添加，确定分享吗？'
+        }).then(() => {
+          this.confirmSubmit();
+        }).catch(() => {
+          
+        });
+      } else {
+        this.confirmSubmit();
       }
     },
     confirmSubmit() {
@@ -120,10 +145,10 @@ export default {
         method: 'post',
         data: this.$http.adornParams({
           user_business_card: {
-            business_card_id: this.business_card_id
+            business_card_id: this.user_business_card.ad_id
           },
           banner_ad_info: {
-            banner_ad_id: this.banner_ad_id
+            banner_ad_id: this.banner_ad_info.ad_id
           },
           news_parent_id: this.news_id,
           text: this.article.text

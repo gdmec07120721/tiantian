@@ -114,13 +114,12 @@ Mock.mock(/\/user\/page_query_user_ad/, {
   'retmsg': 'ok',
   'result_rows': [{
     'user_business_card': {
-      'ad_id': 22, //名片id
+      'ad_id': 21, //名片id
       'user_head_portrait': 'https://img.yzcdn.cn/vant/cat.jpeg', //用户头像图片的连接
       'user_name': '张三', 
       'user_company_name': 'xxxxx公司名称',
       'position': 'xxxx职位',
       'telphone': 'xxxxx电话号码',
-      'ad_slogan': '广告标语',
       'card_type': 0//广告模板类型,默认1
     },
     'banner_ad_info': {
@@ -128,12 +127,18 @@ Mock.mock(/\/user\/page_query_user_ad/, {
       'ad_image_url': 'https://img.yzcdn.cn/vant/cat.jpeg', //广告图片的链接
       'ad_click_effect_type': 1, //"广告点击效果:1:跳转链接；2：拨打电话；3：展示海报";
       'ad_click_content': '广告点击内容',
-      'location_type': 1 //"广告位置：1：底部；2：顶部
+      'location_type': 1, //"广告位置：1：底部；2：顶部
+      'telphone': 'xxxxx电话号码'
     }
   }]
 });
 
 Mock.mock(/\/user\/add_user_ad/, {
+  'retcode': '0',
+  'retmsg': 'success'
+});
+
+Mock.mock(/\/user\/modify_user_ad/, {
   'retcode': '0',
   'retmsg': 'success'
 });
@@ -216,5 +221,40 @@ Mock.mock(/\/user\/page_query_click_user_news/, {
     }
   ]
 });
+
+Mock.mock(/\/user\/page_query_hot_day/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'total_num': 10,       //总数
+  'total_page': 2,       //总页数
+  'page': 2,             //当前页数
+  'limit': 10,           //每页大小
+  'result_rows': [
+    {
+      'news_headline': '生活大爆炸', //新闻标题
+      'nickname': '小冰', //昵称
+      'expose_num': 500 //阅读数
+    }
+  ]
+});
+
+Mock.mock(/\/user\/page_query_hot_month/, {
+  'retcode': 0,
+  'retmsg': 'ok',
+  'total_num': 10,       //总数
+  'total_page': 2,       //总页数
+  'page': 2,             //当前页数
+  'limit': 10,           //每页大小
+  'result_rows': [
+    {
+      'news_headline': '生活大爆炸', //新闻标题
+      'nickname': '小冰', //昵称
+      'expose_num': 500 //阅读数
+    }
+  ]
+});
+
+
+
 
 

@@ -9,7 +9,7 @@
     <van-tabs v-model="tab_active" class="tabs" swipeable>
       <van-tab v-for="(tab, index) in tab_config" :key="index" :title="tab">
         <div class="tabs-page">
-          <component :is="tabs[index]" :new-id="new_id" />
+          <component :is="tabs[index]" :new-id="new_id" @on-card-save="tab_active = 1" />
         </div>
       </van-tab>
     </van-tabs>
@@ -25,7 +25,7 @@ export default {
   components: { AdAddBanner, AdAddCard },
   data() {
     return {
-      tab_active: 2,
+      tab_active: 0,
       tab_config: {
         0: '名片广告',
         1: '通栏广告'

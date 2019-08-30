@@ -12,9 +12,17 @@
 <template>
   <div class="banner-wrap">
     <div class="banner-upload-wrap container">
-      <van-uploader>
-        <span class="icon-banner-upload"></span>
-        <p class="text-info">请点击此处，添加广告图片</p>
+      <van-uploader :before-read="beforeRead" :after-read="afterRead">
+        <template v-if="!params.ad_pic_url">
+          <span class="icon-banner-upload"></span>
+          <p class="text-info">请点击此处，添加广告图片</p>
+        </template>
+        <van-image
+          v-else
+          fit="cover"
+          round
+          :src="params.ad_pic_url"
+        />
       </van-uploader>
     </div>
     <div class="banner-info-wrap container mt-lg">
@@ -29,10 +37,10 @@
               v-for="(value, key) in click_type_config"
               :key="key" 
               class="btn"
-              :plain="click_type != key"
+              :plain="params.ad_action != key"
               type="danger" 
               hairline
-              @click="click_type = key"
+              @click="params.ad_action = key"
             >
               {{ value }}
             </van-button>
@@ -44,7 +52,16 @@
             <span>添加链接</span>
           </p>
           <div class="banner-item-ctx">
-            <van-field v-model="banner_url" class="van-hairline--surround field-input" />
+            <van-field v-model="params.jump_link" class="van-hairline--surround field-input" />
+          </div>
+        </li>
+        <li>
+          <p>
+            <van-icon name="phone-o" color="#D0CECE" style="line-height: inherit;" />
+            <span>添加电话</span>
+          </p>
+          <div class="banner-item-ctx">
+            <van-field v-model="params.mobile" class="van-hairline--surround field-input" />
           </div>
         </li>
       </ul>
@@ -66,18 +83,60 @@ export default {
   },
   data() {
     return {
-      click_type: 0,
       click_type_config: {
         0: '跳转链接',
         1: '拨打电话',
         2: '展示海报'
       },
-      banner_url: ''
+      params: {
+        ad_pic_url: '',
+        ad_action: 0
+      }
     };
   },
   methods: {
+    beforeRead(file) {
+      if (file.type == 'image/jpeg' || file.type == 'image/png') {
+        return true;
+      } else {
+        this.$toast('请上传 jpg/png 格式图片');
+        return false;
+      }
+    },
+    afterRead(file) {
+      this.$http({
+        url: this.$http.adornUrl('/images/save_user_add_image'),
+        method: 'post',
+        data: this.$http.adornParams({
+          file: file
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            this.params.ad_pic_url = res.result_rows[0].image_url;
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
+    },
     save() {
+      let params = Object.assign({}, this.params, {
+        uid: this.uid,
+        ad_type: 2
+      });
 
+      this.$http({
+        url: this.$http.adornUrl('/user/add_user_ad'),
+        method: 'post',
+        data: this.$http.adornParams(params)
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            this.$router.push({ name: 'articleEdit', params: { id: this.news_id }});   
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
     }
   }
 };

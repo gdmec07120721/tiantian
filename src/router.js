@@ -12,18 +12,35 @@ const url = require('url');
 const queryString = require('querystring');
 const router = new Router(routes);
 
+function getUserInfo(code) {
+  return new Promise((resolve, reject) => {
+    Vue.prototype.$http({
+      url: '/user/getUserInfo',
+      method: 'get',
+      data: Vue.prototype.$http.adornData({
+        app_id: window.SITE_CONFIG.weixin_appid,
+        code: code
+      })
+    }).then(res => {
+      if (res && res.errcode === 0) {
+        resolve(res.result_rows[0]);
+      } else {
+        reject(res.errmsg);
+      }
+    });
+  });
+}
+
 router.beforeEach((to, from, next) => {
-  let open_id = sessionStorage.getItem('openid');
+  let mobile = store.getters['user/user'].mobile;
   let uid = store.getters['user/user'].uid;
-  console.log(to.matched.some(record => record.meta.requiresAuth));
-  console.log(open_id && uid);
   
   if (!to.matched.some(record => record.meta.requiresAuth)) {
     next();
   } else {
-    if (open_id && uid) {
+    if (mobile && uid) {
       next();
-    } else if (open_id && !uid) {
+    } else if (!mobile && uid) {
       next({
         path: '/login',
         query: { redirect_uri: to.fullPath }
@@ -37,9 +54,10 @@ router.beforeEach((to, from, next) => {
         //判断用户是否有同意授权
         if (!!code && !!state) {
           //获取openId
-          getOpenId(code, state)
+          getUserInfo(code)
             .then(res => {
-              setOpenId(res.data.openid);
+              setUserInfo(res.result_rows[0]);
+              setWxConfig(res.result_rows[0]);
               next();
             })
             .catch(errmsg => {
@@ -63,53 +81,19 @@ function toWeixin(redirect_path) {
   window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${window.SITE_CONFIG.weixin_appid}&redirect_uri=${encodeURI(redirect_path)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
 }
 
-function getOpenId(code, state) {
-  return new Promise((resolve, reject) => {
-    Vue.prototype.$http({
-      url: 'https://api.weixin.qq.com/sns/oauth2/access_token',
-      method: 'get',
-      data: Vue.prototype.$http.adornData({
-        appid: window.SITE_CONFIG.weixin_appid,
-        secret: window.SITE_CONFIG.weixin_secret,
-        code: code,
-        grant_type: 'authorization_code'
-      })
-    }).then(res => {
-      if (res && res.errcode === 0) {
-        resolve(res.data.openid);
-      } else {
-        reject(res.errmsg);
-      }
-    });
+function setUserInfo (user) {
+  sessionStorage.setItem('user', JSON.stringify(user));
+}
+
+function setWxConfig(config) {
+  let wx_config = Object.assign({}, WEIXINCON, {
+    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: window.SITE_CONFIG.weixin_appid, // 必填，公众号的唯一标识
+    timestamp: config.timestamp,
+    nonceStr: config.nonceStr,
+    signature: config.signature
   });
+  // wx.config(wx_config);
 }
-
-function setOpenId (openid) {
-  sessionStorage.setItem('openid', openid);
-}
-
-// async function getJsapiTicket() {
-//   Vue.prototype.$http({
-//     url: 'https://api.weixin.qq.com/cgi-bin/ticket/getticket',
-//     method: 'post',
-//     data: Vue.prototype.$http.adornData({
-//       access_token: window.SITE_CONFIG.access_token,
-//       type: 'jsapi'
-//     })
-//   }).then(res => {
-//     if (res && res.errcode === 0) {
-//       window.SITE_CONFIG.ticket = res.ticket;
-//       setWxConfig(window.SITE_CONFIG.ticket);
-//     } else {
-//       Toast(res.errmsg);
-//     }
-//   });
-// }
-
-// function setWxConfig(config) {
-//   wx.config(Object.assign({}, WEIXINCON, config, {
-//     debug: true // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-//   }));
-// }
 
 export default router;

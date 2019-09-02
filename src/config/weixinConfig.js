@@ -10,9 +10,6 @@
 // });
 
 const weixin_config = {
-  appId: '', // 必填，公众号的唯一标识
-  timestamp: new Date().getTime(), // 必填，生成签名的时间戳
-  nonceStr: 'jsapi_ticket', // 必填，生成签名的随机串
   jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'] // 必填，需要使用的JS接口列表
 }; 
 

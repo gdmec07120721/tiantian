@@ -120,7 +120,6 @@ export default {
         .then(res => {
           if (res && res.retcode == 0) {
             let user = { uid: this.uid };
-            console.log(user);
             this.$store.commit('user/updatedUser', user);
             sessionStorage.setItem('user', JSON.stringify(user));
             this.$router.replace({ path: this.redirect_uri });

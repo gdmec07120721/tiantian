@@ -11,7 +11,7 @@ module.exports = {
     },
     disableHostCheck: true,
     proxy: {
-      '/': {
+      '/manager': {
         target: '',
         changeOrigin: true
       }

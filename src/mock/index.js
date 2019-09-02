@@ -12,36 +12,48 @@ Mock.mock(/\/news\/query_publish_news_list/, {
       'news_id': 1, //新闻id
       'news_headline': '华为鸿蒙系统即将推出', //新怎标题
       'news_source_detail': '今日头条', //新闻机构
-      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg' //新闻图
+      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg', //新闻图
+      'create_time': '1900-00-00 00:00:00',
+      'news_agencies': '新华社'
     },
     {
       'news_id': 1, //新闻id
       'news_headline': '华为鸿蒙系统即将推出', //新怎标题
       'news_source_detail': '今日头条', //新闻机构
-      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg' //新闻图片
+      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg', //新闻图
+      'create_time': '1900-00-00 00:00:00',
+      'news_agencies': '新华社'
     },
     {
       'news_id': 1, //新闻id
       'news_headline': '华为鸿蒙系统即将推出', //新怎标题
       'news_source_detail': '今日头条', //新闻机构
-      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg' //新闻图片
+      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg', //新闻图
+      'create_time': '1900-00-00 00:00:00',
+      'news_agencies': '新华社'
     }, {
       'news_id': 1, //新闻id
       'news_headline': '华为鸿蒙系统即将推出', //新怎标题
       'news_source_detail': '今日头条', //新闻机构
-      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg' //新闻图
+      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg', //新闻图
+      'create_time': '1900-00-00 00:00:00',
+      'news_agencies': '新华社'
     },
     {
       'news_id': 1, //新闻id
       'news_headline': '华为鸿蒙系统即将推出', //新怎标题
       'news_source_detail': '今日头条', //新闻机构
-      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg' //新闻图片
+      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg', //新闻图
+      'create_time': '1900-00-00 00:00:00',
+      'news_agencies': '新华社'
     },
     {
       'news_id': 1, //新闻id
       'news_headline': '华为鸿蒙系统即将推出', //新怎标题
       'news_source_detail': '今日头条', //新闻机构
-      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg' //新闻图片
+      'news_image_url': 'https://img.yzcdn.cn/vant/apple-1.jpg', //新闻图
+      'create_time': '1900-00-00 00:00:00',
+      'news_agencies': '新华社'
     }
   ]
 });
@@ -52,7 +64,10 @@ Mock.mock(/\/news\/query_publish_news_info/, {
   'result_rows': [
     {
       'news_id': 1, //新闻id
-      'text': '<div>halo</div>' //新闻内容
+      'text': '<div>halo</div>', //新闻内容
+      'news_agencies': '新华社',
+      'news_headline': '华为鸿蒙系统即将推出',
+      'create_time': '1900-00-00 00:00:00'
     }
   ]
 });
@@ -94,7 +109,10 @@ Mock.mock(/\/news\/query_user_own_news/, {
         'location_type': 1 //"广告位置：1：底部；2：顶部
       },
       'text': '<div>afsfdsfdsfsdfdsf</div>', //网页内容
-      'news_id': 11//新闻id
+      'news_id': 11, //新闻id
+      'news_agencies': '新华社',
+      'news_headline': '华为鸿蒙系统即将推出',
+      'create_time': '1900-00-00 00:00:00'
     }
   ]
 });

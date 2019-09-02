@@ -12,10 +12,10 @@
 
 <template>
   <div class="preview-content">
-    <h3 class="preview-content-title text-left mb-0">为什么说贸易战美国一定会输？</h3>
+    <h3 class="preview-content-title text-left mb-0">{{ article.news_headline }}</h3>
     <p class="preview-content-info text-left">
-      <span>来源：央广新闻</span>
-      <span>2019-07-11</span>
+      <span>来源：{{ article.news_agencies }}</span>
+      <span class="pl-sm">{{ article.create_time }}</span>
     </p>
     <template>
       <quill-editor 

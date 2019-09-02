@@ -11,6 +11,7 @@ body {background: #F7F7F7;}
 .pxy-xs {padding: 0 5px;}
 .pxy-sm {padding: 0 10px;}
 .pt-lg {padding-top: 15px;}
+.pl-sm {padding-left: 10px;}
 .mt-lg {margin-top: 15px;}
 .mt-sm {margin-top: 10px;}
 .mt-0 {margin-top: 0px;}
@@ -22,6 +23,7 @@ body {background: #F7F7F7;}
 
 .text-primary {color: #E4211B;}
 .text-info {color: #F1413D;}
+.test-gray {color: #A6A6A6;}
 
 .text-xxs {font-size: 12px;}
 

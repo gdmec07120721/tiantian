@@ -42,8 +42,9 @@
                     />
                     <div class="tabs-content-right">
                       <h3>{{ item.news_headline }}</h3>
+                      <p class="mt-0 text-xxs test-gray">来源：{{ item.news_agencies }}</p>
                       <div class="content-right-footer">
-                        <div>03/10  16:00</div>
+                        <div>{{ item.create_time }}</div>
                         <div class="tabs-share-wrap">
                           <van-icon name="share" /> 
                           <span>推广获客</span>
@@ -109,8 +110,35 @@ export default {
   },
   created() {
     this.queryList();
+    this.queryManagerList();
   },
   methods: {
+    queryManagerList() {
+      this.$http({
+        url: this.$http.adornUrl('/manager/news/query_news_list'),
+        method: 'get',
+        data: this.$http.adornParams({
+          limit: this.limit,
+          page_num: this.page_num,
+          new_type: this.footer_active
+        })
+      })
+        .then(res => {
+          this.loading = false;
+          if (res && res.retcode == 0) {
+            this.new_list = [...this.new_list, ...res.result_rows];
+            this.page_num = res.page_num < res.pages ? res.page_num + 1 : res.page_num;
+
+          } else {
+            this.new_list = [];
+            this.$toast(res.retmsg);
+          }
+
+          if (this.new_list.length >= res.total_num) {
+            this.finished = true;
+          }
+        });
+    },
     queryList() {
       this.$http({
         url: this.$http.adornUrl('/news/query_publish_news_list'),

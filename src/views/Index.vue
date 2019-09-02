@@ -57,7 +57,7 @@
             </van-pull-refresh>
           </div>
         </van-tab>
-        <van-icon name="plus" class="van-tab-add" @click="toAddKeys" />
+        <!-- <van-icon name="plus" class="van-tab-add" @click="toAddKeys" /> -->
       </van-tabs>
     </div>
     <van-button class="add-article-btn" round type="danger" icon="plus" @click="addArticle" />
@@ -93,11 +93,11 @@ export default {
       }],
       footer_active: 0,
       tabs: {
-        0: '推荐',
-        1: '资讯',
-        2: '娱乐',
-        3: '军事',
-        4: '企业制定'
+        0: '推荐'
+        // 1: '资讯',
+        // 2: '娱乐',
+        // 3: '军事',
+        // 4: '企业制定'
       },
       loading: false,
       finished: false

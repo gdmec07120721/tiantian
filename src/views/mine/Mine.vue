@@ -79,7 +79,7 @@
           </div>
         </div>
 
-        <div class="mine-info mt-lg">
+        <!-- <div class="mine-info mt-lg">
           <div class="mine-info-left">
             <van-image
               width="44px"
@@ -94,7 +94,7 @@
             <van-icon name="medel" class="mine-info-medel" />
             <span>已获客793次</span>
           </van-tag>
-        </div>
+        </div> -->
       </template>
     </template>
   </div>

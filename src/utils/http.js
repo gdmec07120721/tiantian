@@ -2,6 +2,7 @@ import axios from 'axios';
 import qs from 'qs';
 
 const http = axios.create({
+  baseURL: '/',
   timeout: 1000 * 30,
   withCredentials: true,
   headers: {

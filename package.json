@@ -28,7 +28,8 @@
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
     "sha1": "^1.1.1",
-    "vue-template-compiler": "^2.6.10"
+    "vue-template-compiler": "^2.6.10",
+    "weixin-jsapi": "^1.1.0"
   },
   "eslintConfig": {
     "root": true,

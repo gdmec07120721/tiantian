@@ -8,7 +8,7 @@
   <div class="page">
     <component :is="card_type_config[user_business_card.card_type]" :options="user_business_card" />
     <the-article-content class="mt-lg" :options="article" />
-    <div class="article-footer mt-lg">
+    <div class="article-footer mt-lg" @click="clickBanner">
       <van-image
         class="article-footer-ad"
         height="85"
@@ -71,6 +71,13 @@ export default {
             this.$toast(res.retmsg);
           }
         });
+    },
+    clickBanner() {
+      if (this.banner_ad_info.ad_click_effect_type == 1) {
+        window.location.href = this.banner_ad_info.jump_link;
+      } else if (this.banner_ad_info.ad_click_effect_type == 2) {
+        window.location.href = `tel://${this.banner_ad_info.telphone}`;
+      }
     },
     toInster() {
       this.$router.push({ name: 'articleEdit', params: { id: this.news_id }});

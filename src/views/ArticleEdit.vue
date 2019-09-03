@@ -28,6 +28,8 @@
 <script>
 import TheArticleContent from '@/views/common/TheArticleContent';
 import TheArticleFooter from '@/views/common/TheArticleFooter';
+import wx from 'weixin-jsapi';
+import WEIXINCON from '@/config/weixinConfig';
 
 export default {
   name: 'ArticleEdit',
@@ -43,17 +45,6 @@ export default {
         weibo: 'share-weibo',
         qqkj: 'share-qqkj'
       },
-      share_config: {
-        imgUrl: 'http://www.yourwebsite.com/share.png', //分享图，默认当相对路径处理，所以使用绝对路径的的话，“http://”协议前缀必须在。
-        desc: '你对页面的描述', //摘要,如果分享到朋友圈的话，不显示摘要。
-        title: '分享卡片的标题', //分享卡片标题
-        link: window.location.href, //分享出去后的链接，这里可以将链接设置为另一个页面。
-        success: function() { //分享成功后的回调函数
-        },
-        cancel: function () { 
-          // 用户取消分享后执行的回调函数
-        }
-      },
       user_business_card: {},
       banner_ad_info: {},
       show_share_dialog: false
@@ -64,7 +55,10 @@ export default {
       return this.$route.params.id;
     },
     uid() {
-      return this.$store.getters['user/user'].uid;
+      return this.user.uid;
+    },
+    user() {
+      return this.$store.getters['user/user'];
     }
   },
   created() {
@@ -77,8 +71,31 @@ export default {
     //   wx.onMenuShareQQ(this.share_config);//分享给手机QQ
     //   wx.onMenuShareQZone(this.share_config);
     // });
+    this.setWxConfig();
   },
   methods: {
+    setWxConfig() {
+      let wx_config = Object.assign({}, WEIXINCON, {
+        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+        appId: window.SITE_CONFIG.weixin_appid, // 必填，公众号的唯一标识
+        timestamp: this.user.timestamp,
+        nonceStr: this.user.nonceStr,
+        signature: this.user.signature
+      });
+
+      wx.config(wx_config);
+      wx.ready(function () {
+        wx.checkJsApi({
+          jsApiList: WEIXINCON.jsApiList,
+          success: function (res) {
+            console.log('调用api成功' + res);
+          }
+        });
+      });
+      wx.error(function(res) {
+        console.log(res);
+      });
+    },
     getCardAndBannerId() {
       this.$http({
         url: this.$http.adornUrl('/user/page_query_user_ad'),
@@ -182,6 +199,39 @@ export default {
     },
     share(type) {
 
+      switch (type) {
+        case 'pyq':
+        case 'qqkj':
+          wx.ready(function () {      //需在用户可能点击分享按钮前就先调用
+            wx.updateTimelineShareData({ 
+              title: this.article.news_headline, // 分享标题
+              link: `${window.SITE_CONFIG.redirect_uri}#${this.$route.fullPath}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: '', // 分享图标
+              success: function (res) {
+                // 设置成功
+                console.log(res);
+              }
+            });
+          });
+          break;
+        case 'weixin':
+        case 'qq':
+          wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
+            wx.updateAppMessageShareData({ 
+              title: this.article.news_headline, // 分享标题
+              desc: '天天推', // 分享描述
+              link: `${window.SITE_CONFIG.redirect_uri}#${this.$route.fullPath}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: '', // 分享图标
+              success: function (res) {
+                // 设置成功
+                console.log(res);
+              }
+            });
+          });
+          break;
+        case 'weibo':
+          break;
+      }
     }
   }
 };

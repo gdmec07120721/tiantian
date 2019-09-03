@@ -46,6 +46,7 @@ export default {
   methods: {
     call() {
       // TODO 调起拨打
+      window.location.href = `tel://${this.options.telphone}`;
     }
   }
 };

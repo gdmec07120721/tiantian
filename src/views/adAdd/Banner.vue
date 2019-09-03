@@ -46,7 +46,7 @@
             </van-button>
           </div>
         </li>
-        <li>
+        <li v-if="params.ad_action == 0">
           <p>
             <span class="iconfont icon-lianjie text-primary"></span>
             <span>添加链接</span>
@@ -55,7 +55,7 @@
             <van-field v-model="params.jump_link" class="van-hairline--surround field-input" />
           </div>
         </li>
-        <li>
+        <li v-if="params.ad_action == 1">
           <p>
             <van-icon name="phone-o" color="#E4211B" style="line-height: inherit; margin-right: 8px;" />
             <span>添加电话</span>

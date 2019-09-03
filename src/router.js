@@ -3,7 +3,6 @@ import Router from 'vue-router';
 import routes from '@/router/index';
 import store from '@/store/index';
 import { Toast } from 'vant';
-import WEIXINCON from '@/config/weixinConfig';
 
 
 Vue.use(Router);
@@ -57,7 +56,6 @@ router.beforeEach((to, from, next) => {
           getUserInfo(code)
             .then(res => {
               setUserInfo(res.result_rows[0]);
-              setWxConfig(res.result_rows[0]);
               next();
             })
             .catch(errmsg => {
@@ -72,9 +70,11 @@ router.beforeEach((to, from, next) => {
       }
     }
   }
-
-
 });
+
+function encodeURI(redirect_path) {
+  return encodeURIComponent(`${window.SITE_CONFIG.redirect_uri}#${redirect_path}`);
+}
 
 function toWeixin(redirect_path) {
   //拉起微信授权登录页面
@@ -83,17 +83,6 @@ function toWeixin(redirect_path) {
 
 function setUserInfo (user) {
   sessionStorage.setItem('user', JSON.stringify(user));
-}
-
-function setWxConfig(config) {
-  let wx_config = Object.assign({}, WEIXINCON, {
-    debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-    appId: window.SITE_CONFIG.weixin_appid, // 必填，公众号的唯一标识
-    timestamp: config.timestamp,
-    nonceStr: config.nonceStr,
-    signature: config.signature
-  });
-  // wx.config(wx_config);
 }
 
 export default router;

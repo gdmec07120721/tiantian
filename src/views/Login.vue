@@ -60,7 +60,6 @@ export default {
   data() {
     return {
       mobile: '',
-      uid: '',
       verify_code: '',
       countdown: 60,
       error_message: '',
@@ -71,6 +70,9 @@ export default {
   computed: {
     redirect_uri() {
       return this.$route.query.redirect_uri;
+    },
+    uid() {
+      return this.$store.getters['user/user'].uid;
     }
   },
   destroyed() {
@@ -90,7 +92,7 @@ export default {
         url: this.$http.adornUrl('/user/send_message_to_mobile'),
         method: 'post',
         data: this.$http.adornParams({
-          open_id: sessionStorage.getItem('openid'),
+          uid: this.uid,
           mobile: this.mobile
         })
       })
@@ -120,6 +122,7 @@ export default {
         .then(res => {
           if (res && res.retcode == 0) {
             let user = { uid: this.uid };
+            
             this.$store.commit('user/updatedUser', user);
             sessionStorage.setItem('user', JSON.stringify(user));
             this.$router.replace({ path: this.redirect_uri });

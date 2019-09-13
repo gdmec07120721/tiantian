@@ -1,7 +1,7 @@
 <style scoped>
 .preview-content-title {font-size: 21px;}
 .preview-content-info {font-size: 12px; color: #666;}
-.quill-editor >>> .ql-editor {min-height: 255px;}
+.quill-editor >>> .ql-editor {min-height: 255px; }
 .preview-content-wrap {text-align: left; }
 
 @media screen and (max-width: 320px){
@@ -10,11 +10,15 @@
 }
 </style>
 
+<style>
+.preview-content-wrap img {display: block; width: 100%;}
+</style>
+
 <template>
   <div class="preview-content">
     <h3 class="preview-content-title text-left mb-0">{{ article.news_headline }}</h3>
     <p class="preview-content-info text-left">
-      <span>来源：{{ article.news_agencies }}</span>
+      <span>来源：{{ article.new_agencies }}</span>
       <span class="pl-sm">{{ article.create_time }}</span>
     </p>
     <template>

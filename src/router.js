@@ -14,10 +14,9 @@ const router = new Router(routes);
 function getUserInfo(code) {
   return new Promise((resolve, reject) => {
     Vue.prototype.$http({
-      url: '/user/getUserInfo',
+      url: Vue.prototype.$http.adornUrl('/user/query_wei_xin_user_info'),
       method: 'get',
       data: Vue.prototype.$http.adornData({
-        app_id: window.SITE_CONFIG.weixin_appid,
         code: code
       })
     }).then(res => {

@@ -21,7 +21,7 @@
         <van-tab 
           v-for="(tab, index) in tabs"
           :key="index" 
-          v-model="footer_active" 
+          v-model="tab_actived" 
           :title="tab"
         >
           <div class="van-tabs-content">
@@ -37,12 +37,13 @@
                     <van-image
                       class="tabs-content-left"
                       width="112"
-                      fit="contain"
+                      height="95px"
+                      fit="cover"
                       :src="item.news_image_url"
                     />
                     <div class="tabs-content-right">
                       <h3>{{ item.news_headline }}</h3>
-                      <p class="mt-0 text-xxs test-gray">来源：{{ item.news_agencies }}</p>
+                      <p class="mt-0 text-xxs test-gray">来源：{{ item.new_agencies }}</p>
                       <div class="content-right-footer">
                         <div>{{ item.create_time }}</div>
                         <div class="tabs-share-wrap">
@@ -61,7 +62,7 @@
       </van-tabs>
     </div>
     <van-button class="add-article-btn" round type="danger" icon="plus" @click="addArticle" />
-    <the-footer :tab-actived="footer_active" />
+    <the-footer :tab-actived="0" />
   </div>
 </template>
 
@@ -91,7 +92,7 @@ export default {
         image: require('@/assets/images/icon-agent.png')
 
       }],
-      footer_active: 0,
+      tab_actived: 0,
       tabs: {
         0: '推荐'
         // 1: '资讯',
@@ -104,13 +105,12 @@ export default {
     };
   },
   watch: {
-    footer_active(nv) {
+    tab_actived(nv) {
       this.refreshList();
     }
   },
   created() {
-    this.queryList();
-    this.queryManagerList();
+    //this.queryManagerList();
   },
   methods: {
     queryManagerList() {
@@ -120,7 +120,7 @@ export default {
         data: this.$http.adornParams({
           limit: this.limit,
           page_num: this.page_num,
-          new_type: this.footer_active
+          new_type: this.tab_actived
         })
       })
         .then(res => {
@@ -146,7 +146,7 @@ export default {
         data: this.$http.adornParams({
           limit: this.limit,
           page_num: this.page_num,
-          new_type: this.footer_active
+          new_type: this.tab_actived
         })
       })
         .then(res => {
@@ -190,7 +190,12 @@ export default {
 .grid-item-image >>> img {width: 20px;}
 .grid-item-text {font-size: 12px; padding-top: 11px;}
 .van-tabs-wrap {position: relative;  background: #fff;}
-.van-tabs-wrap >>> .van-tabs__nav {width: 90%; }
+/* 只有推荐一个tab 暂时去掉 */
+/* .van-tabs-wrap >>> .van-tabs__nav {width: 90%; } */
+/* 只有推荐一个tab 暂时去掉 */
+/* 只有推荐一个tab 暂时去加上 */
+.van-tabs-wrap >>> .van-tabs__wrap--scrollable .van-tab {flex-basis: 22%; }
+/* 只有推荐一个tab 暂时去加上 */
 .van-tab-add {display: flex; width: 16px; height: 16px; background: #F1413D; color: #fff; text-align: center; border-radius: 4px; align-items: center; justify-content: center; position: absolute; right: 15px; top:13px;}
 .van-tab-add:before {font-size: 12px; height: 12px;}
 .van-tabs-content {position: fixed; top: 267px; bottom: 50px; z-index: 0; overflow: auto; left: 0; right: 0;}

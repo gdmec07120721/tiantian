@@ -1,7 +1,7 @@
 <template>
   <div class="page">
     <div class="preview-header" @click="toAddCard"></div>
-    <the-article-content class="mt-lg" :options="article" :contenteditable="true" />
+    <the-article-content class="mt-lg article-edit-ctn" :options="article" :contenteditable="true" />
     <the-article-footer :show-share-btn="true" @on-submit="submit" @on-click="toAddBanner" />
     <van-popup
       v-model="show_share_dialog"
@@ -16,7 +16,7 @@
         <li 
           v-for="(class_name, key) in share_class" 
           :key="key"
-          @click="share(key)"
+          @click="toDoshare(key)"
         >
           <span :class="class_name"></span>
         </li>
@@ -47,6 +47,7 @@ export default {
       },
       user_business_card: {},
       banner_ad_info: {},
+      share: {},
       show_share_dialog: false
     };
   },
@@ -63,6 +64,7 @@ export default {
   },
   created() {
     this.queryArticleDetail();
+    this.getCardAndBannerId();
   },
   mounted() {
     // wx.ready(function () {
@@ -98,17 +100,16 @@ export default {
     },
     getCardAndBannerId() {
       this.$http({
-        url: this.$http.adornUrl('/user/page_query_user_ad'),
+        url: this.$http.adornUrl('/user/query_user_card_and_ad'),
         method: 'get',
         data: this.$http.adornParams({
-          news_id: this.news_id
+          uid: this.uid
         })
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.article = res.result_rows[0];
-            this.user_business_card = res.result_rows[0].user_business_card;
-            this.banner_ad_info = res.result_rows[0].banner_ad_info;
+            this.user_business_card = res.result_rows[0].user_business_card || {};
+            this.banner_ad_info = res.result_rows[0].banner_ad_info || {};
           } else {
             this.$toast(res.retmsg);
           }
@@ -118,20 +119,20 @@ export default {
       this.$http({
         url: this.$http.adornUrl('/news/query_publish_news_info'),
         method: 'post',
-        data: this.$http.adornParams({
+        data: this.$http.adornData({
           news_id: this.news_id
-        })
+        }, 'form')
       })
         .then(res => {
           if (res && res.retcode == 0) {
             this.article = res.result_rows[0];
+            console.log(this.article);
           } else {
             this.$toast(res.retmsg);
           }
         });
     },
     toAddCard() {
-      console.log('dsadasda');
       this.$router.push({ 
         name: 'adAdd', 
         params: { 
@@ -168,20 +169,18 @@ export default {
       this.$http({
         url: this.$http.adornUrl('/news/save_user_edit_news'),
         method: 'post',
-        data: this.$http.adornParams({
-          user_business_card: {
-            business_card_id: this.user_business_card.ad_id
-          },
-          banner_ad_info: {
-            banner_ad_id: this.banner_ad_info.ad_id
-          },
+        data: this.$http.adornData({
+          business_card_id: this.user_business_card.business_card_id,
+          banner_ad_id: this.banner_ad_info.banner_ad_id,
           news_parent_id: this.news_id,
-          text: this.article.text
-        })
+          text: this.article.text,
+          uid: this.uid
+        }, 'form')
       })
         .then(res => {
           if (res && res.retcode == 0) {
             this.show_share_dialog = true;
+            this.share = res.result_rows[0];
           } else {
             this.$toast(res.retmsg);
           }
@@ -197,16 +196,17 @@ export default {
           tab_active: 1
         }});
     },
-    share(type) {
+    toDoshare(type) {
+      let self = this;
 
       switch (type) {
         case 'pyq':
         case 'qqkj':
           wx.ready(function () {      //需在用户可能点击分享按钮前就先调用
             wx.updateTimelineShareData({ 
-              title: this.article.news_headline, // 分享标题
-              link: `${window.SITE_CONFIG.redirect_uri}#${this.$route.fullPath}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: '', // 分享图标
+              title: self.share.news_headline, // 分享标题
+              link: `${self.share.news_url}?share_user=${self.uid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: self.share.news_image_url, // 分享图标
               success: function (res) {
                 // 设置成功
                 console.log(res);
@@ -218,10 +218,10 @@ export default {
         case 'qq':
           wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
             wx.updateAppMessageShareData({ 
-              title: this.article.news_headline, // 分享标题
+              title: self.share.news_headline, // 分享标题
               desc: '天天推', // 分享描述
-              link: `${window.SITE_CONFIG.redirect_uri}#${this.$route.fullPath}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: '', // 分享图标
+              link: `${self.share.news_url}?share_user=${self.uid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+              imgUrl: self.share.news_image_url, // 分享图标
               success: function (res) {
                 // 设置成功
                 console.log(res);
@@ -249,4 +249,5 @@ export default {
 .share-qqkj {background: url(../assets/images/share-qqkj.png);}
 .article-share-title {padding: 15px; margin: 0;}
 .article-share-close {position: absolute; font-size: 18px; right: 15px; top: 20px;}
+.article-edit-ctn {padding-bottom: 170px;}
 </style>

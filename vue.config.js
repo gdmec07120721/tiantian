@@ -12,8 +12,27 @@ module.exports = {
     disableHostCheck: true,
     proxy: {
       '/manager': {
-        target: '',
+        target: 'http://120.78.14.252',
         changeOrigin: true
+      },
+      '/news': {
+        target: 'http://120.78.14.252',
+        changeOrigin: true
+      },
+      '/images': {
+        target: 'http://120.78.14.252',
+        changeOrigin: true
+      },
+      '/user': {
+        target: 'http://120.78.14.252',
+        changeOrigin: true
+      },
+      'http://www.tiantiantui.top': {
+        target: 'http://120.78.14.252',
+        changeOrigin: true,
+        pathRewrite: {
+          '^http://www.tiantiantui.top': ''
+        }
       }
     }
   }

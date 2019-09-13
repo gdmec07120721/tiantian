@@ -6,9 +6,10 @@ const http = axios.create({
   timeout: 1000 * 30,
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json;charset=utf-8'
+    'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
   }
 });
+
 
 /**
  * 请求拦截
@@ -22,6 +23,11 @@ http.interceptors.request.use(config => {
 
   config.headers['X-Xht-Timestamp'] = new Date().getTime() / 1000;
   config.headers['X-Xht-AppVersion'] = '2.0.0';
+
+  if (config.method == 'get') {
+    config.url = `${config.url}?${http.formParams(config.data)}`;
+  }
+
   return config;
 }, error => {
   return Promise.reject(error);
@@ -51,6 +57,15 @@ http.adornUrl = (actionName) => {
  */
 http.adornParams = (params = {}) => {
   return params;
+};
+
+http.formParams = (params = {}) => {
+  let ret = '';
+
+  for (let it in params) {
+    ret += `${ret == '' ? '' : '&'}${encodeURIComponent(it)}=${encodeURIComponent(params[it])}`;
+  }
+  return ret;
 };
 
 /**

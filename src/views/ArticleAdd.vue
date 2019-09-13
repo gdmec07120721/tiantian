@@ -52,9 +52,9 @@ export default {
       this.$http({
         url: this.$http.adornUrl('/news/query_publish_news_info'),
         method: 'post',
-        data: this.$http.adornParams({
-          url: this.url
-        })
+        data: this.$http.adornData({
+          news_url: this.url
+        }, 'form')
       })
         .then(res => {
           if (res && res.retcode == 0) {

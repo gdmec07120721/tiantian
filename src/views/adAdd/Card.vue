@@ -100,30 +100,6 @@ export default {
     }
   },
   methods: {
-    beforeRead(file) {
-      if (file.type == 'image/jpeg' || file.type == 'image/png') {
-        return true;
-      } else {
-        this.$toast('请上传 jpg/png 格式图片');
-        return false;
-      }
-    },
-    afterRead(file) {
-      this.$http({
-        url: this.$http.adornUrl('/images/save_user_add_image'),
-        method: 'post',
-        data: this.$http.adornParams({
-          file: file
-        })
-      })
-        .then(res => {
-          if (res && res.retcode == 0) {
-            this.params.user_head_portrait = res.result_rows[0].image_url;
-          } else {
-            this.$toast(res.retmsg);
-          }
-        });
-    },
     save() {
       if (!this.params.mobile || !isPhoneNumber(this.params.mobile)) {
         this.$toast('请输入正确格式的手机号码');
@@ -131,14 +107,13 @@ export default {
       }
 
       let params = Object.assign({}, this.params, {
-        uid: this.uid,
-        ad_type: 1
+        uid: this.uid
       });
 
       this.$http({
-        url: this.$http.adornUrl('/user/add_user_ad'),
+        url: this.$http.adornUrl('/user/add_user_business_card'),
         method: 'post',
-        data: this.$http.adornParams(params)
+        data: this.$http.adornData(params, 'form')
       })
         .then(res => {
           if (res && res.retcode == 0) {
@@ -147,6 +122,42 @@ export default {
             this.$toast(res.retmsg);
           }
         });
+    },
+    beforeRead(file) {
+      console.log(file);
+      if (file.type == 'image/jpeg' || file.type == 'image/png') {
+        return true;
+      } else {
+        this.$toast('请上传 jpg/png 格式图片');
+        return false;
+      }
+    },
+    //上传文件
+    afterRead(data) {
+      let self = this,
+        formdata = new FormData(),
+        xhr = new XMLHttpRequest();
+
+      formdata.append('file', data.file);
+              
+
+      xhr.open('POST', this.$http.adornUrl('/images/save_user_add_image'), true);
+      xhr.onload = function(oEvent) {
+        if (xhr.status == 200) {
+          let res = JSON.parse(xhr.responseText);
+
+          if (res && res.retcode == 0) {
+            self.params.user_head_portrait = res.result_rows[0].image_url;
+          } else {
+            self.$toast(res.retmsg);
+          }
+        }
+      };
+
+      xhr.onerror = function(error) {
+        self.$toast(error);
+      };
+      xhr.send(formdata);
     }
   }
 };

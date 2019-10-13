@@ -11,7 +11,7 @@
       </van-swipe>
     </div>
     <div class="content">
-      <van-grid :border="false" :column-num="3">
+      <van-grid :border="false" :column-num="3" class="ad-list-wrap">
         <van-grid-item v-for="(item, index) in grids" :key="index">
           <van-image class="grid-item-image" :src="item.image" />
           <span class="grid-item-text">{{ item.name }}</span>
@@ -198,7 +198,7 @@ export default {
 /* 只有推荐一个tab 暂时去加上 */
 .van-tab-add {display: flex; width: 16px; height: 16px; background: #F1413D; color: #fff; text-align: center; border-radius: 4px; align-items: center; justify-content: center; position: absolute; right: 15px; top:13px;}
 .van-tab-add:before {font-size: 12px; height: 12px;}
-.van-tabs-content {position: fixed; top: 267px; bottom: 50px; z-index: 0; overflow: auto; left: 0; right: 0;}
+.van-tabs-content {position: fixed; top: 257px; bottom: 50px; z-index: 0; overflow: auto; left: 0; right: 0;}
 .tabs-content-wrap{width: 100%; display: flex; align-items: stretch;}
 .tabs-content-right{display: flex; flex-direction: column; align-content: space-around; justify-content: space-between; margin-left: 10px; flex: 1;}
 .tabs-content-right h3 {font-size: 15px; text-align: left; font-weight: 400; margin: 0;}
@@ -207,4 +207,5 @@ export default {
 .tabs-share-wrap i {height: 12px; line-height: 15px; margin-right: 4px;}
 .tabs-share-wrap span, .tabs-share-wrap i{display: inline-block; vertical-align: middle;}
 .add-article-btn {position: fixed; bottom: 60px; right: 20px; width: 50px; height: 50px; font-size: 20px; padding: 0;}
+.ad-list-wrap >>> .van-grid-item__content {padding: 10px;}
 </style>

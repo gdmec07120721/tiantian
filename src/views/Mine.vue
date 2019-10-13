@@ -8,7 +8,7 @@
     <van-tabs v-model="mine_active" class="tabs" swipeable>
       <van-tab v-for="(mine, index) in mine_config" :key="index" class="" :title="mine">
         <div class="tabs-page">
-          <component :is="mines[index]" />
+          <component :is="mines[index]" :updated="updated" />
         </div>
       </van-tab>
     </van-tabs>
@@ -32,8 +32,14 @@ export default {
         1: '热榜'
       },
       mines: ['MineMine', 'MineHotList'],
-      footer_active: 3
+      footer_active: 3,
+      updated: ''
     };
+  },
+  watch: {
+    mine_active(nv) {
+      this.updated = new Date().getTime();
+    }
   }
 };
 </script>

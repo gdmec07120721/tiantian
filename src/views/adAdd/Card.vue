@@ -43,26 +43,30 @@
         placeholder="请输入姓名"
         label="姓名"
         left-icon="edit"
+        :clearable="true"
       />
       <van-field
         v-model="params.user_company_name"
         placeholder="请输入公司名称"
         label="公司名称"
         left-icon="hotel-o"
+        :clearable="true"
       />
       <van-field
         v-model="params.position"
         placeholder="请输入职位"
         label="职位"
         left-icon="award-o"
+        :clearable="true"
       />
       <van-field
-        v-model="params.mobile"
+        v-model="params.telphone"
         placeholder="请输入手机号码"
         label="手机号码"
         left-icon="phone-o"
         :maxlength="11"
         type="tel"
+        :clearable="true"
       />
     </van-cell-group>
     <van-cell-group title="名片样式" class="ad-add-card-type">
@@ -99,19 +103,51 @@ export default {
       return this.$store.getters['user/user'].uid;
     }
   },
+  created() {
+    this.getCardAndBannerId();
+  },
   methods: {
+    getCardAndBannerId() {
+      this.$http({
+        url: this.$http.adornUrl('/user/query_user_card_and_ad'),
+        method: 'get',
+        data: this.$http.adornParams({
+          uid: this.uid
+        })
+      })
+        .then(res => {
+          if (res && res.retcode == 0) {
+            console.log('res.result_rows[0]', res.result_rows[0]);
+            this.params = res.result_rows[0].user_business_card || {
+              card_type: 0,
+              user_head_portrait: require('../../assets/images/icon-banner-upload.png')
+            };
+          } else {
+            this.$toast(res.retmsg);
+          }
+        });
+    },
     save() {
-      if (!this.params.mobile || !isPhoneNumber(this.params.mobile)) {
+      if (!this.params.telphone || !isPhoneNumber(this.params.telphone)) {
         this.$toast('请输入正确格式的手机号码');
         return false;
       }
-
-      let params = Object.assign({}, this.params, {
+      
+      let params = JSON.parse(JSON.stringify(Object.assign({}, this.params, {
         uid: this.uid
-      });
+      })));
+      let url = '';
+     
+      if (this.params.business_card_id) {
+        url = '/user/modify_user_business_card';
+        delete params.modify_time;
+      } else {
+        url = '/user/add_user_business_card';
+        delete params.business_card_id;
+      }
 
       this.$http({
-        url: this.$http.adornUrl('/user/add_user_business_card'),
+        url: this.$http.adornUrl(url),
         method: 'post',
         data: this.$http.adornData(params, 'form')
       })

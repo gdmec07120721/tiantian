@@ -1,9 +1,11 @@
 
 
 module.exports = {
+  publicPath: '/tiantian', // 默认'/'，部署应用包时的基本 URL
+  outputDir: 'dist', // 'dist', 生产环境构建文件的目录
   lintOnSave: process.env.NODE_ENV === 'development',
   devServer: {
-    port: 8080,
+    port: 8081,
     open: true,
     overlay: {
       warnings: false,

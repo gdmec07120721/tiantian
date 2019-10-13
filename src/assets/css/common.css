@@ -39,7 +39,7 @@ body {background: #F7F7F7;}
 .card-btn {line-height: 25px; height: 25px; font-size: 12px;}
 .card-second {display: flex;align-items: stretch; position: relative; overflow: hidden; border-radius: 4px; height: 120px;}
 .card-second-img-bg {padding: 0; margin: 0;}
-.card-second-img {width: 60%;}
+.card-second-img {width: 43%;}
 .card-second-img img{display: block; width: 100%;}
 .card-second-info {position: absolute; width: 65%; height: 120px; top: 0; right: 0; z-index: 2; font-size: 12px;}
 .card-second-info::after {content: ''; position: absolute; top: 0; left: 0; right: 0; height: 0; border-bottom: 120px solid #fff; border-left: 35px solid transparent; z-index: -1;}

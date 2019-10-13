@@ -55,7 +55,7 @@
             </span>
             <span class="hot-list-item-text">
               <van-icon class="hot-list-item-icon" name="newspaper-o" />
-              <span>文章 {{ item.expose_num }} 篇</span>
+              <span>文章 {{ item.news_cnt }} 篇</span>
             </span>
           </van-cell>
         </van-list>
@@ -67,6 +67,12 @@
 <script>
 export default {
   name: 'HotList',
+  props: {
+    updated: {
+      type: [Number, String],
+      default: ''
+    }
+  },
   data() {
     return {
       tab_actived: 0,
@@ -80,8 +86,16 @@ export default {
       finished: false
     };
   },
+  computed: {
+    uid() {
+      return this.$store.getters['user/user'].uid;
+    }
+  },
   watch: {
     tab_actived(nv) {
+      this.refreshList();
+    },
+    updated() {
       this.refreshList();
     }
   },
@@ -90,7 +104,7 @@ export default {
       this.tab_actived = key;
     },
     onLoad() {
-      let url = this.tab_actived == 0 ? '/user/page_query_hot_day' : '/user/page_query_hot_month';
+      let url = this.tab_actived == 0 ? '/user/three_days_host_list' : '/user/monthly_host_list';
 
       this.$http({
         url: this.$http.adornUrl(url),
@@ -104,9 +118,12 @@ export default {
         .then(res => {
           this.loading = false;
           if (res && res.retcode == 0) {
-            this.list = [...this.list, ...res.result_rows];
-            this.page = this.page < res.total_page ? this.page + 1 : res.total_page;
-
+            if (res.total_num == 0) {
+              this.list = [];
+            } else {
+              this.list = [...this.list, ...res.result_rows];
+              this.page = this.page < res.total_page ? this.page + 1 : res.total_page;
+            }
           } else {
             this.list = [];
             this.$toast(res.retmsg);

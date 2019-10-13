@@ -59,6 +59,7 @@ export default {
   name: 'Login',
   data() {
     return {
+      uid: '',
       mobile: '',
       verify_code: '',
       countdown: 60,
@@ -71,8 +72,8 @@ export default {
     redirect_uri() {
       return this.$route.query.redirect_uri;
     },
-    uid() {
-      return this.$store.getters['user/user'].uid;
+    user() {
+      return this.$store.getters['user/user'];
     }
   },
   destroyed() {
@@ -91,14 +92,19 @@ export default {
       this.$http({
         url: this.$http.adornUrl('/user/send_message_to_mobile'),
         method: 'post',
-        data: this.$http.adornParams({
-          uid: this.uid,
-          mobile: this.mobile
-        })
+        data: this.$http.adornData({
+          'open_id': this.user.openid, //微信的open_id
+          'we_chat_nickname': this.user.nickname, //微信昵称-用户昵称默认与这个一致
+          'mobile': this.mobile, //手机号
+          'nickname': this.user.nickname, //昵称--不传的话与用we_chat_nickname
+          'headimgurl': this.user.headimgurl //用户头像链接  
+        }, 'form')
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.uid = res.result_rows[0].uid;
+            let uid = res.result_rows[0].uid;
+            
+            this.uid = uid;
             this.is_verify = true;
             this.toDoCountdown();
           } else {
@@ -114,14 +120,14 @@ export default {
       this.$http({
         url: this.$http.adornUrl('/user/verify_code'),
         method: 'post',
-        data: this.$http.adornParams({
-          uid: this.uid,
+        data: this.$http.adornData({
+          uid: this.uid, 
           verify_code: this.verify_code
-        })
+        }, 'form')
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            let user = { uid: this.uid };
+            let user = Object.assign({}, this.user, { uid: this.uid });
             
             this.$store.commit('user/updatedUser', user);
             sessionStorage.setItem('user', JSON.stringify(user));

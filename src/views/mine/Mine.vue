@@ -103,6 +103,12 @@
 <script>
 export default {
   name: 'MineMine',
+  props: {
+    updated: {
+      type: [Number, String],
+      default: ''
+    }
+  },
   data() {
     return {
       page: 1,
@@ -117,13 +123,19 @@ export default {
       return this.$store.getters['user/user'].uid;
     }
   },
+  watch: {
+    updated() {
+      this.refreshList();
+      this.getuserNewsStatistics();
+    }
+  },
   created() {
     this.getuserNewsStatistics();
   },
   methods: {
     getuserNewsStatistics() {
       this.$http({
-        url: this.$http.adornUrl('/user/user_news_statistics'),
+        url: this.$http.adornUrl('/user/user_news_statistics_detail'),
         method: 'get',
         data: this.$http.adornParams({
           uid: this.uid
@@ -140,7 +152,7 @@ export default {
     },
     onLoad() {
       this.$http({
-        url: this.$http.adornUrl('/user/page_query_user_click_user_news'),
+        url: this.$http.adornUrl('/user/page_query_click_user_news'),
         method: 'get',
         data: this.$http.adornParams({
           limit: 10,
@@ -151,9 +163,12 @@ export default {
         .then(res => {
           this.loading = false;
           if (res && res.retcode == 0) {
-            this.list = [...this.list, ...res.result_rows];
-            this.page = this.page < res.total_page ? this.page + 1 : res.total_page;
-
+            if (res.total_num == 0) {
+              this.list = [];
+            } else {
+              this.list = [...this.list, ...res.result_rows];
+              this.page = this.page < res.total_page ? this.page + 1 : res.total_page;
+            }
           } else {
             this.list = [];
             this.$toast(res.retmsg);

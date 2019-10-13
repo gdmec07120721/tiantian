@@ -9,8 +9,8 @@
         <van-field
           v-model="url"
           type="url"
-          clearable
           placeholder="请粘贴文章链接"
+          :clearable="true"
         />
       </div>
       <p class="add-article-tip">支持公众号、腾讯新闻、今日头条新闻链接</p>

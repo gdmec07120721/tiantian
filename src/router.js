@@ -16,33 +16,28 @@ function getUserInfo(code) {
     Vue.prototype.$http({
       url: Vue.prototype.$http.adornUrl('/user/query_wei_xin_user_info'),
       method: 'get',
-      data: Vue.prototype.$http.adornData({
-        code: code
+      data: Vue.prototype.$http.adornParams({
+        code: code,
+        url: window.SITE_CONFIG.redirect_uri
       })
     }).then(res => {
-      if (res && res.errcode === 0) {
+      if (res && res.retcode === 0) {
         resolve(res.result_rows[0]);
       } else {
-        reject(res.errmsg);
+        reject(res.retmsg);
       }
     });
   });
 }
 
 router.beforeEach((to, from, next) => {
-  let mobile = store.getters['user/user'].mobile;
   let uid = store.getters['user/user'].uid;
-  
+
   if (!to.matched.some(record => record.meta.requiresAuth)) {
     next();
   } else {
-    if (mobile && uid) {
+    if (uid) {
       next();
-    } else if (!mobile && uid) {
-      next({
-        path: '/login',
-        query: { redirect_uri: to.fullPath }
-      });
     } else {
       let url_parse = url.parse(window.location.href);
       let code = queryString.parse(url_parse.query).code || to.query.code;
@@ -54,8 +49,19 @@ router.beforeEach((to, from, next) => {
           //获取openId
           getUserInfo(code)
             .then(res => {
-              setUserInfo(res.result_rows[0]);
-              next();
+              console.log(res);
+              setUserInfo({ ...res, code });
+              
+              if (!to.matched.some(record => record.meta.login)) {
+                next();
+              } else if (!res.mobile && !res.uid) {
+                next({
+                  path: '/login',
+                  query: { redirect_uri: to.fullPath }
+                });
+              } else {
+                next();
+              }
             })
             .catch(errmsg => {
               Toast('请关注企业号' + errmsg);
@@ -77,10 +83,11 @@ function encodeURI(redirect_path) {
 
 function toWeixin(redirect_path) {
   //拉起微信授权登录页面
-  window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${window.SITE_CONFIG.weixin_appid}&redirect_uri=${encodeURI(redirect_path)}&response_type=code&scope=snsapi_base&state=123#wechat_redirect`;
+  window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${window.SITE_CONFIG.weixin_appid}&redirect_uri=${encodeURI(redirect_path)}&response_type=code&scope=snsapi_userinfo&state=123#wechat_redirect`;
 }
 
 function setUserInfo (user) {
+  store.commit('user/updatedUser', user);
   sessionStorage.setItem('user', JSON.stringify(user));
 }
 

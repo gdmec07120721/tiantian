@@ -1,8 +1,22 @@
 <template>
   <div class="page">
-    <div class="preview-header" @click="toAddCard"></div>
+    <template>
+      <div v-if="!user_business_card.business_card_id" class="preview-header" @click="toAddCard"></div>
+      <div v-else @click="toAddCard">
+        <component :is="card_type_config[user_business_card.card_type]" :options="user_business_card" />
+      </div>
+    </template>
     <the-article-content class="mt-lg article-edit-ctn" :options="article" :contenteditable="true" />
-    <the-article-footer :show-share-btn="true" @on-submit="submit" @on-click="toAddBanner" />
+    <template>
+      <the-article-footer :show-share-btn="true" :show-default-ad="!banner_ad_info.banner_ad_id" @on-submit="submit" @on-click="toAddBanner">
+        <van-image
+          v-if="!!banner_ad_info.ad_image_url"
+          fit="cover"
+          height="85"
+          :src="banner_ad_info.ad_image_url"
+        />
+      </the-article-footer>
+    </template>
     <van-popup
       v-model="show_share_dialog"
       round
@@ -10,6 +24,7 @@
       :style="{ height: '140px' }"
       class="article-share"
     >
+      <div id="nativeShare"></div>
       <p class="text-left article-share-title">分享到：</p>
       <van-icon name="close" class="article-share-close" @click="show_share_dialog = false" />
       <ul>
@@ -28,12 +43,16 @@
 <script>
 import TheArticleContent from '@/views/common/TheArticleContent';
 import TheArticleFooter from '@/views/common/TheArticleFooter';
+import TheCardOne from '@/views/common/TheCardOne';
+import TheCardSecond from '@/views/common/TheCardSecond';
 import wx from 'weixin-jsapi';
-import WEIXINCON from '@/config/weixinConfig';
+
+
 
 export default {
   name: 'ArticleEdit',
-  components: { TheArticleContent, TheArticleFooter },
+  components: { TheCardOne, TheCardSecond, TheArticleContent, TheArticleFooter },
+
   data() {
     return {
       url: '',
@@ -45,7 +64,10 @@ export default {
         weibo: 'share-weibo',
         qqkj: 'share-qqkj'
       },
-      user_business_card: {},
+      card_type_config: ['TheCardOne', 'TheCardSecond'],
+      user_business_card: {
+        card_type: 0
+      },
       banner_ad_info: {},
       share: {},
       show_share_dialog: false
@@ -65,39 +87,11 @@ export default {
   created() {
     this.queryArticleDetail();
     this.getCardAndBannerId();
+    //this.setWxConfig();
   },
-  mounted() {
-    // wx.ready(function () {
-    //   wx.updateAppMessageShareData(this.share_config);//分享给好友
-    //   wx.updateTimelineShareData(this.share_config);//分享到朋友圈
-    //   wx.onMenuShareQQ(this.share_config);//分享给手机QQ
-    //   wx.onMenuShareQZone(this.share_config);
-    // });
-    this.setWxConfig();
-  },
-  methods: {
-    setWxConfig() {
-      let wx_config = Object.assign({}, WEIXINCON, {
-        debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-        appId: window.SITE_CONFIG.weixin_appid, // 必填，公众号的唯一标识
-        timestamp: this.user.timestamp,
-        nonceStr: this.user.nonceStr,
-        signature: this.user.signature
-      });
 
-      wx.config(wx_config);
-      wx.ready(function () {
-        wx.checkJsApi({
-          jsApiList: WEIXINCON.jsApiList,
-          success: function (res) {
-            console.log('调用api成功' + res);
-          }
-        });
-      });
-      wx.error(function(res) {
-        console.log(res);
-      });
-    },
+  methods: {
+
     getCardAndBannerId() {
       this.$http({
         url: this.$http.adornUrl('/user/query_user_card_and_ad'),
@@ -126,7 +120,6 @@ export default {
         .then(res => {
           if (res && res.retcode == 0) {
             this.article = res.result_rows[0];
-            console.log(this.article);
           } else {
             this.$toast(res.retmsg);
           }
@@ -143,7 +136,7 @@ export default {
         }});
     },
     submit() {
-      if (!this.user_business_card.ad_id) {
+      if (!this.user_business_card.business_card_id) {
         this.$dialog.confirm({
           title: '提示',
           message: '名片暂未添加，确定分享吗？'
@@ -152,7 +145,7 @@ export default {
         }).catch(() => {
           
         });
-      } else if (!this.banner_ad_info.ad_id) {
+      } else if (!this.banner_ad_info.banner_ad_id) {
         this.$dialog.confirm({
           title: '提示',
           message: '广告暂未添加，确定分享吗？'
@@ -179,8 +172,21 @@ export default {
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            this.show_share_dialog = true;
+            //this.show_share_dialog = true;
+            let self = this;
+
             this.share = res.result_rows[0];
+            this.$toast('保存成功，请点击右上角可即刻分享！');
+            setTimeout(() => {
+              self.$router.push({
+                name: 'article', 
+                params: { id: self.share.news_id },
+                query: { 
+                  parent_news_id: self.share.parent_news_id,
+                  news_image_url: self.share.news_image_url
+                }
+              });
+            }, 500);
           } else {
             this.$toast(res.retmsg);
           }
@@ -195,43 +201,6 @@ export default {
         query: {
           tab_active: 1
         }});
-    },
-    toDoshare(type) {
-      let self = this;
-
-      switch (type) {
-        case 'pyq':
-        case 'qqkj':
-          wx.ready(function () {      //需在用户可能点击分享按钮前就先调用
-            wx.updateTimelineShareData({ 
-              title: self.share.news_headline, // 分享标题
-              link: `${self.share.news_url}?share_user=${self.uid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: self.share.news_image_url, // 分享图标
-              success: function (res) {
-                // 设置成功
-                console.log(res);
-              }
-            });
-          });
-          break;
-        case 'weixin':
-        case 'qq':
-          wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
-            wx.updateAppMessageShareData({ 
-              title: self.share.news_headline, // 分享标题
-              desc: '天天推', // 分享描述
-              link: `${self.share.news_url}?share_user=${self.uid}`, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-              imgUrl: self.share.news_image_url, // 分享图标
-              success: function (res) {
-                // 设置成功
-                console.log(res);
-              }
-            });
-          });
-          break;
-        case 'weibo':
-          break;
-      }
     }
   }
 };

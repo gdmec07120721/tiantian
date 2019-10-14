@@ -27,8 +27,8 @@ function getVersions() {
 function getBrowser() {
   if (this.versions.mobile) { //判断是否是移动设备打开。browser代码在下面
     let ua = navigator.userAgent.toLowerCase();//获取判断用的对象
-
-    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+    
+    if (ua.match(/MicroMessenger/i) == 'micromessenger' || ua.match(/wechat/i) == 'wechat') {
       //在微信中打开
       return 'weixin';
     }

@@ -185,6 +185,7 @@ export default {
           if (res && res.retcode == 0) {
             self.params.user_head_portrait = res.result_rows[0].image_url;
           } else {
+            self.params.user_head_portrait = '';
             self.$toast(res.retmsg);
           }
         }

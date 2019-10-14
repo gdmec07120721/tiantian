@@ -43,11 +43,11 @@
               width="30px"
               height="30px"
               fit="cover"
-              src="https://img.yzcdn.cn/vant/cat.jpeg"
+              :src="item.headimgurl || 'https://img.yzcdn.cn/vant/cat.jpeg'"
             />
             <span style="max-width: 60px; padding-left: 3px;">
-              <span v-if="index < 3"><strong>{{ item.nickname }}</strong></span>
-              <span v-else>{{ item.nickname }}</span>
+              <span v-if="index < 3"><strong>{{ item.we_chat_nickname }}</strong></span>
+              <span v-else>{{ item.we_chat_nickname }}</span>
             </span>
             <span class="hot-list-item-text">
               <van-icon class="hot-list-item-icon" name="browsing-history" />

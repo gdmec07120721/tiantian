@@ -54,15 +54,15 @@
               <p class="mine-sub-info mt-0 pxy-xs">
                 <span>
                   <van-icon name="mine-icon description" />
-                  <span>阅读数 {{ item.expose_num }}</span>
+                  <span>阅读数 {{ item.expose_cnt }}</span>
                 </span>
                 <span>
                   <i class="mine-icon iconfont icon-gongdanguanli-gongda"></i>
-                  <span>点击量 {{ item.click_num }}</span>
+                  <span>点击量 {{ item.click_cnt }}</span>
                 </span>
                 <span>
                   <van-icon class="mine-icon" name="share" />
-                  <span>转发量 {{ item.forward_num }}</span>
+                  <span>转发量 {{ item.forward_cnt }}</span>
                 </span>
               </p>
             </van-cell>

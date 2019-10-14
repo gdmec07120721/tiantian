@@ -186,6 +186,7 @@ export default {
           if (res && res.retcode == 0) {
             self.params.ad_image_url = res.result_rows[0].image_url;
           } else {
+            self.params.ad_image_url = '';
             self.$toast(res.retmsg);
           }
         }

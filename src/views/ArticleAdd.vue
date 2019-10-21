@@ -13,7 +13,7 @@
           :clearable="true"
         />
       </div>
-      <p class="add-article-tip">支持公众号、腾讯新闻、今日头条新闻链接</p>
+      <p class="add-article-tip">支持公众号新闻链接</p>
       <div>
         <van-button type="primary" class="add-article-btn" @click="submit">下一步</van-button>
       </div>
@@ -23,8 +23,7 @@
         <van-icon name="question-o" />
         <span>如何复制文章链接?</span>
       </p>
-      <p class="add-article-tip-content">先推荐腾讯的短网址服务（腾讯对自己家的业务网址是优先解析的，安全性方面也会高很多），其实就是利用腾讯的微博，虽然没什么人访问，但是制作短网址还是挺方便的。<br>
-        登陆自己的微博记住微博地址然后把长网址贴到微博发文框内就获得了短地址。</p>
+      <p class="add-article-tip-content">在公众号文章页面，点击右上角…按钮，在弹出的选项中选择复制链接即可</p>
     </div>
   </div>
 </template>

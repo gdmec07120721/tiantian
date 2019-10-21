@@ -32,7 +32,7 @@ export default {
         1: '热榜'
       },
       mines: ['MineMine', 'MineHotList'],
-      footer_active: 3,
+      footer_active: 2,
       updated: ''
     };
   },

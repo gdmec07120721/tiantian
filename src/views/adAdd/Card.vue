@@ -79,14 +79,14 @@
         <img src="@/assets/images/card-2.png">
       </div>
     </van-cell-group>
-    <div class="ad-add-footer">
+    <div v-if="show_btn" class="ad-add-footer">
       <van-button type="danger" class="btn" @click="save">保存</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { isPhoneNumber } from '@/utils/index';
+import { isPhoneNumber, isAndroid } from '@/utils/index';
 
 export default {
   name: 'Card',
@@ -95,7 +95,9 @@ export default {
       params: {
         card_type: 0,
         user_head_portrait: require('../../assets/images/icon-banner-upload.png')
-      }
+      },
+      client_height: 0,
+      show_btn: true
     };   
   },
   computed: {
@@ -105,6 +107,21 @@ export default {
   },
   created() {
     this.getCardAndBannerId();
+  },
+  mounted() {
+    let self = this;
+
+    this.client_height = document.documentElement.clientHeight;
+    
+    window.onresize = () => {
+      let new_height = document.documentElement.clientHeight;
+
+      if (new_height < self.client_height - 100) {
+        self.show_btn = false;
+      } else {
+        self.show_btn = true;
+      }
+    };
   },
   methods: {
     getCardAndBannerId() {

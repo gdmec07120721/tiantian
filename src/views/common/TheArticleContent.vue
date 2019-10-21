@@ -1,8 +1,8 @@
 <style scoped>
 .preview-content-title {font-size: 21px;}
-.preview-content-info {font-size: 12px; color: #666;}
+.preview-content-info {font-size: 12px; color: #666; padding: 10px 0;}
 .quill-editor >>> .ql-editor {min-height: 255px; }
-.preview-content-wrap {text-align: left; }
+.preview-content-wrap {text-align: left; font-size: 13px !important; line-height: 1.5em !important;}
 
 @media screen and (max-width: 320px){
   .preview-content-title {margin-top: 0px;}
@@ -11,6 +11,9 @@
 </style>
 
 <style>
+.quill-editor p,
+.preview-content-wrap p {padding-bottom: 10px;}
+.quill-editor img,
 .preview-content-wrap img {display: block; width: 100%;}
 </style>
 
@@ -101,9 +104,11 @@ export default {
     },
     onEditorBlur(quill) {
       console.log('editor blur!', quill);
+      this.$emit('on-blur');
     },
     onEditorFocus(quill) {
       console.log('editor focus!', quill);
+      this.$emit('on-focus');
     }
   }
 };

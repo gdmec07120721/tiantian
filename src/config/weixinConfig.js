@@ -10,7 +10,7 @@
 // });
 
 const weixin_config = {
-  jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'] // 必填，需要使用的JS接口列表
+  jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'onMenuShareQZone'] // 必填，需要使用的JS接口列表
 }; 
 
 export default weixin_config;

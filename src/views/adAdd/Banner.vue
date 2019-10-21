@@ -53,7 +53,11 @@
             <span>添加链接</span>
           </p>
           <div class="banner-item-ctx">
-            <van-field v-model="params.ad_click_content" class="van-hairline--surround field-input" :clearable="true" />
+            <van-field 
+              v-model="params.ad_click_content" 
+              class="van-hairline--surround field-input" 
+              :clearable="true"
+            />
           </div>
         </li>
         <li v-if="params.ad_click_effect_type == 1">
@@ -62,19 +66,25 @@
             <span>添加电话</span>
           </p>
           <div class="banner-item-ctx">
-            <van-field v-model="params.ad_click_content" :maxlength="11" type="tel" class="van-hairline--surround field-input" :clearable="true" />
+            <van-field 
+              v-model="params.ad_click_content" 
+              :maxlength="11" 
+              type="tel" 
+              class="van-hairline--surround field-input" 
+              :clearable="true" 
+            />
           </div>
         </li>
       </ul>
     </div>
-    <div class="ad-add-footer">
+    <div v-if="show_btn" class="ad-add-footer">
       <van-button type="danger" class="btn" @click="save">保存</van-button>
     </div>
   </div>
 </template>
 
 <script>
-import { isURL, isPhoneNumber } from '@/utils/index';
+import { isURL, isPhoneNumber, isAndroid } from '@/utils/index';
 
 export default {
   name: 'Banner',
@@ -94,7 +104,8 @@ export default {
       params: {
         ad_image_url: '',
         ad_click_effect_type: 1
-      }
+      },
+      show_btn: true
     };
   },
   computed: {
@@ -104,6 +115,21 @@ export default {
   },
   created() {
     this.getCardAndBannerId();
+  },
+  mounted() {
+    let self = this;
+
+    this.client_height = document.documentElement.clientHeight;
+    
+    window.onresize = () => {
+      let new_height = document.documentElement.clientHeight;
+
+      if (new_height < self.client_height - 100) {
+        self.show_btn = false;
+      } else {
+        self.show_btn = true;
+      }
+    };
   },
   methods: {
     getCardAndBannerId() {

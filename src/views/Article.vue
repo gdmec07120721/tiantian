@@ -37,6 +37,8 @@ import TheCardOne from '@/views/common/TheCardOne';
 import TheCardSecond from '@/views/common/TheCardSecond';
 import loadExternalAssetMixin from '@/utils/loadExternalAssetMixin';
 import WEIXINCON from '@/config/weixinConfig';
+import { isAndroid } from '@/utils/index';
+//import wx from 'weixin-js-sdk';
 
 export default {
   name: 'Article',
@@ -66,8 +68,9 @@ export default {
       return this.$store.getters['user/user'];
     },
     share() {
+      let link = isAndroid() ? '' : `http://www.tiantiantui.top/tiantian#/article/${this.$route.params.id}?share_user=${this.user.uid}&news_image_url=${this.$route.query.news_image_url}`;
       return {
-        link: `http://www.tiantiantui.top/tiantian#/article/${this.$route.params.id}?share_user=${this.user.uid}`,
+        link: link,
         img_url: this.$route.query.news_image_url
       };
     }
@@ -79,25 +82,17 @@ export default {
       });
   },
   mounted() {
-    // wx.ready(function () {
-    //   wx.updateAppMessageShareData(this.share_config);//分享给好友
-    //   wx.updateTimelineShareData(this.share_config);//分享到朋友圈
-    //   wx.onMenuShareQQ(this.share_config);//分享给手机QQ
-    //   wx.onMenuShareQZone(this.share_config);
-    // });
-    //this.setWxConfig();
     this.loadScript('http://res2.wx.qq.com/open/js/jweixin-1.4.0.js', () => {
       this.setWxConfig();
     });
   },
   methods: {
-    getConfig() {
+    querySignature() {
       return new Promise((resolve, reject) => {
         this.$http({
-          url: this.$http.adornUrl('/user/query_wei_xin_user_info'),
+          url: this.$http.adornUrl('/auth/querySignature'),
           method: 'get',
           data: this.$http.adornParams({
-            code: this.user.code,
             url: encodeURIComponent(location.href.split('#')[0])
           })
         })
@@ -111,55 +106,68 @@ export default {
       });
     },
     setWxConfig() {
-      this.getConfig()
-        .then(res => {
-          let self = this;
-          let wx_config = Object.assign({}, {
-            debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-            appId: window.SITE_CONFIG.weixin_appid, // 必填，公众号的唯一标识
-            timestamp: Number(res.timestamp),
-            nonceStr: res.nonce_str,
-            signature: res.signature,
-            jsApiList: WEIXINCON.jsApiList
-          });
-
-          wx.config(wx_config);
-          wx.ready(function () {
-            let share_data = {
-              title: self.article.news_headline, // 分享标题
-              desc: '天天推', // 分享描述
-              link: self.share.link, // 分享链接
-              imgUrl: self.share.img_url, // 分享图标
-              success: function (res) {
-                // 设置成功
-                this.$toast('分享成功！');
-              }
-            };
-            //分享到朋友圈
-            wx.onMenuShareTimeline(share_data);
-
-            //分享给朋友
-            wx.onMenuShareAppMessage(share_data);
-
-            //分享到QQ好友
-            wx.onMenuShareQQ(share_data);
-
-            //分享到QQ空间
-            wx.onMenuShareQZone(share_data);
-            wx.checkJsApi({
-              jsApiList: WEIXINCON.jsApiList,
-              success: function (res) {
-                console.log('调用api成功' + res);
-              }
+      try {
+        this.querySignature()
+          .then(res => {
+          
+            let self = this;
+            let wx_config = Object.assign({}, {
+              debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+              appId: window.SITE_CONFIG.weixin_appid, // 必填，公众号的唯一标识
+              timestamp: Number(res.timestamp),
+              nonceStr: res.nonce_str,
+              signature: res.signature,
+              jsApiList: WEIXINCON.jsApiList
             });
+
+            wx.config(wx_config);
+            wx.ready(function () {
+              let desc = self.article.text.replace(/<[^>]+>/g, '').substring(0, 30);
+              let share_data = {
+                title: self.article.news_headline, // 分享标题
+                desc: `${desc}...`, // 分享描述
+                link: self.share.link,
+                imgUrl: self.share.img_url,
+                success: function (res) {
+                  self.behavior({ operate_type: 1 });
+                  self.$toast('分享成功！');
+                },
+                cancel: function (res) {
+                  self.$toast('取消分享！');
+                }
+              };
+ 
+              //分享到朋友圈
+              wx.onMenuShareTimeline(share_data);
+
+              //分享给朋友
+              wx.onMenuShareAppMessage(share_data);
+
+              //分享到QQ好友
+              wx.onMenuShareQQ(share_data);
+
+              //分享到QQ空间
+              wx.onMenuShareQZone(share_data);
+              
+              wx.checkJsApi({
+                jsApiList: WEIXINCON.jsApiList,
+                success: function (res) {
+                  console.log('调用api成功' + res);
+                }
+              });
+            });
+            wx.error(function(res) {
+              self.$toast('2222', JSON.stringify(res));
+            });
+          
+          })
+          .catch(err => {
+            self.$toast(err);
           });
-          wx.error(function(res) {
-            self.$toast(JSON.stringify(res));
-          });
-        })
-        .catch(err => {
-          this.$toast(err);
-        });
+      } 
+      catch (err) {
+        self.$toast('捕获到异常' + err);
+      }
     },
     queryDetail() {
       return this.$http({

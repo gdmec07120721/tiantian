@@ -30,9 +30,24 @@ function getUserInfo(code) {
   });
 }
 
-router.beforeEach((to, from, next) => {
-  let uid = store.getters['user/user'].uid;
+function setTitle(to) {
+  let title = '';
+  
+  if (to.matched.some(record => record.meta.title)) {
+    title = '天天推 - ' + to.meta.title; 
+  } else {
+    title =  '天天推';
+  }
 
+  let title_els = document.getElementsByTagName('title');
+
+  title_els[0].innerText = title;
+}
+
+router.beforeEach((to, from, next) => {
+  
+  let uid = store.getters['user/user'].uid;
+  setTitle(to);
   if (!to.matched.some(record => record.meta.requiresAuth)) {
     next();
   } else {
@@ -64,7 +79,7 @@ router.beforeEach((to, from, next) => {
               }
             })
             .catch(errmsg => {
-              Toast('请关注企业号' + errmsg);
+              toWeixin(to.fullPath);
             }); 
         } else {
           toWeixin(to.fullPath);

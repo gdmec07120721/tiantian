@@ -18,7 +18,7 @@ const routes = {
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ '@/views/ArticleAdd.vue'),
-      meta: { requiresAuth: true, login: true }
+      meta: { title: '添加', requiresAuth: true, login: true }
     },
     {
       path: '/article/:id',
@@ -36,7 +36,7 @@ const routes = {
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ '@/views/ArticleEdit.vue'),
-      meta: { requiresAuth: true, login: true }
+      meta: { title: '编辑', requiresAuth: true, login: true }
     },
     {
       path: '/adAdd/:id',
@@ -45,7 +45,7 @@ const routes = {
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ '@/views/AdAdd.vue'),
-      meta: { requiresAuth: true, login: true }
+      meta: { title: '添加名片', requiresAuth: true, login: true }
     },
     {
       path: '/keysMake',
@@ -54,16 +54,7 @@ const routes = {
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ '@/views/KeysMake.vue'),
-      meta: { requiresAuth: true, login: true }
-    },
-    {
-      path: '/mine',
-      name: 'mine',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ '@/views/Mine.vue'),
-      meta: { requiresAuth: true, login: true }
+      meta: { title: '', requiresAuth: true, login: true }
     },
     {
       path: '/data',
@@ -72,7 +63,16 @@ const routes = {
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import(/* webpackChunkName: "about" */ '@/views/Data.vue'),
-      meta: { requiresAuth: true, login: true }
+      meta: { title: '数据', requiresAuth: true, login: true }
+    },
+    {
+      path: '/client',
+      name: 'client',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '@/views/Client.vue'),
+      meta: { title: '客户', requiresAuth: true, login: true }
     },
     {
       path: '/login',

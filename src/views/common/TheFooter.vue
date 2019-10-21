@@ -2,9 +2,9 @@
   <div class="footer">
     <van-tabbar v-model="actived" active-color="#F1413D">
       <van-tabbar-item to="/index" icon="hot-o">热文</van-tabbar-item>
-      <van-tabbar-item to="/search" icon="friends-o">客户</van-tabbar-item>
+      <van-tabbar-item to="/client" icon="friends-o">客户</van-tabbar-item>
       <van-tabbar-item to="/data" icon="bar-chart-o">数据</van-tabbar-item>
-      <van-tabbar-item to="/mine" icon="manager-o">我的</van-tabbar-item>
+      <!-- <van-tabbar-item to="/mine" icon="manager-o">我的</van-tabbar-item> -->
     </van-tabbar>
   </div>
 </template>

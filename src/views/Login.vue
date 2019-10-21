@@ -8,6 +8,7 @@
 .login-btn {margin-top: 30px;}
 .login-code > p {color: #666666; font-weight: 100;}
 .login-code-time {color: #666;}
+.login_tip {font-size: 12px; text-align: left; color: #666;}
 </style>
 <template>
   <div class="login-page">
@@ -17,7 +18,7 @@
     </div>
     <div class="login-ctn">
       <div v-if="!is_verify" class="login-ctn-wrap">
-        <h3>欢迎加入</h3>
+        <h3>登陆天天推</h3>
         <van-cell-group class="pt-lg" :border="false">
           <van-field
             v-model="mobile"
@@ -28,6 +29,7 @@
             :maxlength="11"
           />
           <van-button type="danger" size="large" class="login-btn" @click="sendMobile">下一步</van-button>
+          <p class="login_tip">未注册的手机号码验证后自动登录</p>
         </van-cell-group>
       </div>
       <div v-else class="login-ctn-wrap login-code">

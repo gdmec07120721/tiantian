@@ -11,12 +11,12 @@
       </van-swipe>
     </div>
     <div class="content">
-      <van-grid :border="false" :column-num="3" class="ad-list-wrap">
+      <!-- <van-grid :border="false" :column-num="3" class="ad-list-wrap">
         <van-grid-item v-for="(item, index) in grids" :key="index">
           <van-image class="grid-item-image" :src="item.image" />
           <span class="grid-item-text">{{ item.name }}</span>
         </van-grid-item>
-      </van-grid>
+      </van-grid> -->
       <van-tabs class="van-tabs-wrap" swipeable>
         <van-tab 
           v-for="(tab, index) in tabs"
@@ -24,7 +24,7 @@
           v-model="tab_actived" 
           :title="tab"
         >
-          <div class="van-tabs-content">
+          <div class="van-tabs-content temporary-class">
             <van-pull-refresh v-model="loading" @refresh="refreshList">
               <van-list
                 v-model="loading"
@@ -77,9 +77,7 @@ export default {
       page_num: 1,
       new_list: [],
       swipes: {
-        0: require('@/assets/images/banner-1.png'),
-        1: require('@/assets/images/banner-1.png'),
-        2: require('@/assets/images/banner-1.png')
+        0: require('@/assets/images/banner-1.png')
       },
       grids: [{
         name: '升级会员',
@@ -207,5 +205,8 @@ export default {
 .tabs-share-wrap i {height: 12px; line-height: 15px; margin-right: 4px;}
 .tabs-share-wrap span, .tabs-share-wrap i{display: inline-block; vertical-align: middle;}
 .add-article-btn {position: fixed; bottom: 60px; right: 20px; width: 50px; height: 50px; font-size: 20px; padding: 0;}
+/* 目前去掉广告 暂时去加上设置临时高度 s */
+.temporary-class {top: 189px;}
+/* 目前去掉广告 暂时去加上设置临时高度 e */
 .ad-list-wrap >>> .van-grid-item__content {padding: 10px;}
 </style>

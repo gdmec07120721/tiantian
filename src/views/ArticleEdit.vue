@@ -8,7 +8,7 @@
     </template>
     <the-article-content class="mt-lg article-edit-ctn" :options="article" :contenteditable="true" />
     <template>
-      <the-article-footer :show-share-btn="true" :show-default-ad="!banner_ad_info.banner_ad_id" @on-submit="submit" @on-click="toAddBanner">
+      <the-article-footer v-if="show_btn" :show-share-btn="true" :show-default-ad="!banner_ad_info.banner_ad_id" @on-submit="submit" @on-click="toAddBanner">
         <van-image
           v-if="!!banner_ad_info.ad_image_url"
           fit="cover"
@@ -45,9 +45,6 @@ import TheArticleContent from '@/views/common/TheArticleContent';
 import TheArticleFooter from '@/views/common/TheArticleFooter';
 import TheCardOne from '@/views/common/TheCardOne';
 import TheCardSecond from '@/views/common/TheCardSecond';
-import wx from 'weixin-jsapi';
-
-
 
 export default {
   name: 'ArticleEdit',
@@ -70,7 +67,8 @@ export default {
       },
       banner_ad_info: {},
       share: {},
-      show_share_dialog: false
+      show_share_dialog: false,
+      show_btn: true
     };
   },
   computed: {
@@ -89,9 +87,21 @@ export default {
     this.getCardAndBannerId();
     //this.setWxConfig();
   },
+  mounted() {
+    let self = this;
 
+    this.client_height = document.documentElement.clientHeight;
+    window.onresize = () => {
+      let new_height = document.documentElement.clientHeight;
+
+      if (new_height < self.client_height - 100) {
+        self.show_btn = false;
+      } else {
+        self.show_btn = true;
+      }
+    };
+  },
   methods: {
-
     getCardAndBannerId() {
       this.$http({
         url: this.$http.adornUrl('/user/query_user_card_and_ad'),
@@ -183,7 +193,8 @@ export default {
                 params: { id: self.share.news_id },
                 query: { 
                   parent_news_id: self.share.parent_news_id,
-                  news_image_url: self.share.news_image_url
+                  news_image_url: self.share.news_image_url,
+                  share_user: self.uid
                 }
               });
             }, 500);

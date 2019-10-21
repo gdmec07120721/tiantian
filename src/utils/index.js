@@ -24,3 +24,12 @@ export function isPhoneNumber (mobile = '', type = 0) {
 
   return is_match;
 }
+
+export function isAndroid() {
+  let u = navigator.userAgent;
+  console.log(u);
+  if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {
+    return true;
+  }
+  return false;
+}

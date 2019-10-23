@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>clipImg</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <style>
+    .img-div,
+    .clip-wrap {width: 500px; height: 500px; position: relative;}
+    .clip-wrap {overflow: hidden;}
+    .clip-div {height: 80px; border: 1px dotted #785; position: absolute; left: 0; right: 0; z-index: 2; cursor: move; top: 0px; display: none;}
+    </style>
+  </head>
+  <body>
+    <div>
+      <button id="btn1" class="btn1" type="button">截图</button>
+      <button id="btn2" class="btn2" type="button">确认截图</button>
+      <button id="btn3" class="btn3" type="button">打开</button>
+    </div>
+    <input id="fileInput" type="file" style="visibility: hidden;" accept="image/*" />
+    <div id="clipImgDiv" class="clip-wrap">
+      <div id="clipDiv" class="clip-div"></div>
+      <canvas id="imgCanvas" width="500" height="500"></canvas>
+    </div>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <div id="test"></div>
+    <script>
+      var originWidth, originHeight;
+      var defCanvasWidth, defCanvasHeight;
+      var fileInput = document.getElementById('fileInput');
+      var clipBtn = document.getElementById('btn1');
+      var confirmClipBtn = document.getElementById('btn2');
+      var uploadImgBtn = document.getElementById('btn3');
+      var clipDiv = document.getElementById('clipDiv'); // 截图div
+      var clipImgDiv = document.getElementById('clipImgDiv'); 
+      var imgCanvas = document.getElementById('imgCanvas'); //缩小图片canvas
+      var imgCtx = imgCanvas.getContext('2d');
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+      var width = canvas.width; 
+      var height = canvas.height;
+      var isMove = false;
+      //获取截图盒子的clientY值
+      var clipImgDivClientY = clipImgDiv.clientTop;
+      //截取框移动目标值
+      var clip = {
+        clientX: 0,
+        clientY: 0
+      }
+
+      console.log('clipImgDivClientY', clipImgDivClientY)
+
+      //上传Image元素
+      var img = new Image();
+      //缩小之后的Image元素
+      var newImg = new Image();
+      
+      var params = {
+        width,
+        height,
+        imgNaturalWidth: '', //图片原始大小
+        imgNaturalHeight: ''
+      }
+      
+      //点击打开上传按钮
+      uploadImgBtn.addEventListener("click", function () {
+        fileInput.click();
+      })
+
+      //上传文件有改变
+      fileInput.addEventListener('change', function(e) {
+        //创建文件流对象
+        var reader = new FileReader();
+        
+        //把文件流转化为base64
+        reader.readAsDataURL(this.files[0]);
+        reader.onload = function (e) {
+          img.src = e.target.result;
+          img.naturalWidth = img.width = params.width;
+          img.naturalHeight = img.height= params.height;
+          img.onload = function() {
+            imgCtx.drawImage(img, 0, 0, params.width, params.height);
+            newImg.src = imgCanvas.toDataURL("image/png");
+          }
+        }
+       });
+
+       clipBtn.addEventListener('click', function() {
+        clipDiv.style.display = 'block';
+       });
+
+       confirmClipBtn.addEventListener('click', confirmClipImg);
+
+       function confirmClipImg() {
+         console.log(clipDiv.offsetLeft, clipDiv.offsetTop, clipDiv.offsetWidth, clipDiv.offsetHeight)
+        canvas.width = clipDiv.offsetWidth; 
+        canvas.height = clipDiv.offsetHeight;
+        ctx.drawImage(newImg, clipDiv.offsetLeft, clipDiv.offsetTop, clipDiv.offsetWidth, clipDiv.offsetHeight, 0, 0, clipDiv.offsetWidth, clipDiv.offsetHeight);
+       }
+
+      function touchstart() {
+        event.preventDefault();
+        //初始化截取框移动目标值
+        var {clientX, clientY} = event;
+
+        clip = {clientX, clientY};
+        //可以移动截取框
+        isMove = true;
+      }
+
+      function touchmove() {
+        event.preventDefault();
+
+        //判断是否可移动截取框
+        if (isMove) {
+          var {clientX, clientY} = event; //获取移动目标的 X，Y位置
+          var offsetTop = clipDiv.offsetTop; //获取截取框相对父元素的位置
+          var top = offsetTop + (clientY -  clip.clientY); //获取移动后截取框相对父元素的位置
+
+          //判断截取框移动的位置是否超出指定范围
+          if ((top + clipDiv.offsetHeight) < (clipImgDiv.offsetHeight) && top > 0) {
+            clipDiv.style.top = top + 'px';  //设置移动后截取框相对父元素的位置
+            clip = {clientX, clientY}; //更新截取框移动目标值
+            confirmClipImg();
+          } 
+        }
+      }
+
+      function touchend() {
+        event.preventDefault();
+        //不可移动截取框
+        isMove = false;
+      }
+
+
+       clipDiv.addEventListener('touchstart', touchstart, false);
+       clipDiv.addEventListener('mousedown', touchstart, false);
+
+       clipDiv.addEventListener('touchmove', touchmove, false);
+       clipDiv.addEventListener('mousemove', touchmove, false);
+
+       clipDiv.addEventListener('touchend', touchend, false);
+       clipDiv.addEventListener('mouseup', touchend, false);
+
+
+
+
+    </script>
+  </body>
+</html>

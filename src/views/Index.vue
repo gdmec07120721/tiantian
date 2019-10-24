@@ -99,7 +99,8 @@ export default {
         // 4: '企业制定'
       },
       loading: false,
-      finished: false
+      finished: false,
+      is_query: false
     };
   },
   watch: {
@@ -111,33 +112,13 @@ export default {
     //this.queryManagerList();
   },
   methods: {
-    queryManagerList() {
-      this.$http({
-        url: this.$http.adornUrl('/manager/news/query_news_list'),
-        method: 'get',
-        data: this.$http.adornParams({
-          limit: this.limit,
-          page_num: this.page_num,
-          new_type: this.tab_actived
-        })
-      })
-        .then(res => {
-          this.loading = false;
-          if (res && res.retcode == 0) {
-            this.new_list = [...this.new_list, ...res.result_rows];
-            this.page_num = res.page_num < res.pages ? res.page_num + 1 : res.page_num;
-
-          } else {
-            this.new_list = [];
-            this.$toast(res.retmsg);
-          }
-
-          if (this.new_list.length >= res.total_num) {
-            this.finished = true;
-          }
-        });
-    },
     queryList() {
+      if (this.is_query) {
+        return false;
+      }
+
+      this.is_query = true;
+
       this.$http({
         url: this.$http.adornUrl('/news/query_publish_news_list'),
         method: 'get',
@@ -149,6 +130,7 @@ export default {
       })
         .then(res => {
           this.loading = false;
+          this.is_query = false;
           if (res && res.retcode == 0) {
             this.new_list = [...this.new_list, ...res.result_rows];
             this.page_num = res.page_num < res.pages ? res.page_num + 1 : res.page_num;
@@ -168,7 +150,6 @@ export default {
       this.new_list = [];
       this.loading = false;
       this.finished = false;
-      this.queryList();
     },
     addArticle() {
       this.$router.push({ name: 'articleAdd' });

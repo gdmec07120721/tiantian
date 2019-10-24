@@ -96,7 +96,8 @@ export default {
       list: [],
       data_cnt: {},
       loading: false,
-      finished: false
+      finished: false,
+      is_query: false
     };
   },
   computed: {
@@ -127,6 +128,11 @@ export default {
         });
     },
     onLoad() {
+      if (this.is_query) {
+        return false;
+      }
+
+      this.is_query = true;
       this.$http({
         url: this.$http.adornUrl('/user/page_query_user_click_user_news'),
         method: 'get',
@@ -138,6 +144,7 @@ export default {
       })
         .then(res => {
           this.loading = false;
+          this.is_query = false;
           if (res && res.retcode == 0) {
             if (res.total_num == 0) {
               this.list = [];
@@ -160,7 +167,6 @@ export default {
       this.list = [];
       this.loading = false;
       this.finished = false;
-      this.onLoad();
     }
   }
 };

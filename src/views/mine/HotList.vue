@@ -83,7 +83,8 @@ export default {
       page: 1,
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      is_query: false
     };
   },
   computed: {
@@ -104,7 +105,14 @@ export default {
       this.tab_actived = key;
     },
     onLoad() {
+      if (this.is_query) {
+        return false;
+      }
+
+      this.is_query = true;
+
       let url = this.tab_actived == 0 ? '/user/three_days_host_list' : '/user/monthly_host_list';
+
 
       this.$http({
         url: this.$http.adornUrl(url),
@@ -117,6 +125,7 @@ export default {
       })
         .then(res => {
           this.loading = false;
+          this.is_query = false;
           if (res && res.retcode == 0) {
             if (res.total_num == 0) {
               this.list = [];
@@ -139,7 +148,6 @@ export default {
       this.list = [];
       this.loading = false;
       this.finished = false;
-      this.onLoad();
     }
   }
 };

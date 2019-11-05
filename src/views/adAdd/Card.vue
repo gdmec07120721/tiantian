@@ -87,6 +87,8 @@
 
 <script>
 import { isPhoneNumber, isAndroid } from '@/utils/index';
+// clip 部分代码
+import ClipImg from '@/utils/clipImg';
 
 export default {
   name: 'Card',
@@ -177,7 +179,19 @@ export default {
         });
     },
     beforeRead(file) {
-      console.log(file);
+      // clip部分代码 S
+      this.clipImg = new ClipImg({
+        file: file,
+        clip: {
+          width: '100%',
+          height: '80px'
+        },
+        onConfirm: res => {
+          //self.clipImgSrc = res.clipImgSrc;
+        }
+      });
+
+      // clip 部分代码 E
       if (file.type == 'image/jpeg' || file.type == 'image/png') {
         return true;
       } else {

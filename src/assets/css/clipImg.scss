@@ -1,0 +1,48 @@
+.clip {
+  &-img-wrap, 
+  &-wrap {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+  }
+  &-wrap {
+    position: fixed;
+    background: rgba($color: #000000, $alpha: .8);
+    z-index: 10000;
+    &-footer {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 30px;
+
+      .footer-left,
+      .footer-right {
+        position: absolute;
+      }
+      .footer-left { 
+        left: 15px;
+      }
+      .footer-right {
+        right: 15px;
+      }
+    }
+  }
+  &-img-wrap {
+    position: absolute;
+    margin: auto;
+  }
+  &-div {
+    position: absolute;
+    z-index: 100;
+    border: 1px dotted #785;
+  }
+  &-btn {
+    border: 0;
+    background: none;
+    color: #eee;
+    &.btn-primary {
+      color: #1989fa;
+    }
+  }
+}

@@ -39,15 +39,12 @@
       var width = canvas.width; 
       var height = canvas.height;
       var isMove = false;
-      //获取截图盒子的clientY值
-      var clipImgDivClientY = clipImgDiv.clientTop;
+
       //截取框移动目标值
       var clip = {
         clientX: 0,
         clientY: 0
       }
-
-      console.log('clipImgDivClientY', clipImgDivClientY)
 
       //上传Image元素
       var img = new Image();
@@ -91,7 +88,6 @@
        confirmClipBtn.addEventListener('click', confirmClipImg);
 
        function confirmClipImg() {
-         console.log(clipDiv.offsetLeft, clipDiv.offsetTop, clipDiv.offsetWidth, clipDiv.offsetHeight)
         canvas.width = clipDiv.offsetWidth; 
         canvas.height = clipDiv.offsetHeight;
         ctx.drawImage(newImg, clipDiv.offsetLeft, clipDiv.offsetTop, clipDiv.offsetWidth, clipDiv.offsetHeight, 0, 0, clipDiv.offsetWidth, clipDiv.offsetHeight);
@@ -108,6 +104,7 @@
       }
 
       function touchmove() {
+        console.log(event)
         event.preventDefault();
 
         //判断是否可移动截取框
@@ -140,9 +137,6 @@
 
        clipDiv.addEventListener('touchend', touchend, false);
        clipDiv.addEventListener('mouseup', touchend, false);
-
-
-
 
     </script>
   </body>

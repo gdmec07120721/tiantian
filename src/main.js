@@ -9,6 +9,7 @@ import 'vant/lib/index.css';
 import '@/config/index';
 //import '@/config/weixinConfig';
 import '@/assets/css/common.css';
+import '@/assets/css/clipImg.scss';
 import { Lazyload } from 'vant';
 
 import VueQuillEditor from 'vue-quill-editor';

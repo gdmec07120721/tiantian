@@ -123,9 +123,10 @@ export default {
             wx.config(wx_config);
             wx.ready(function () {
               let desc = self.article.text.replace(/<[^>]+>/g, '').substring(0, 20);
+              let name = self.user_business_card.user_name || self.user.nickname;
               let share_data = {
                 title: self.article.news_headline, // 分享标题
-                desc: `【${self.user.nickname}】邀您阅读：${desc}...`, // 分享描述
+                desc: `【${name}】邀您阅读：${desc}...`, // 分享描述
                 link: self.share.link,
                 imgUrl: self.share.img_url,
                 success: function (res) {

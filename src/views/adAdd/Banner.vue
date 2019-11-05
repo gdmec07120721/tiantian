@@ -84,7 +84,9 @@
 </template>
 
 <script>
-import { isURL, isPhoneNumber, isAndroid } from '@/utils/index';
+import { isURL, isPhoneNumber, isAndroid, dataURLtoFile } from '@/utils/index';
+// clip 部分代码
+import ClipImg from '@/utils/clipImg';
 
 export default {
   name: 'Banner',
@@ -187,6 +189,24 @@ export default {
           }
         });
     },
+    clipImgFun(file) {
+      return new Promise((resolve, reject) => {
+        // clip部分代码 S
+        this.clipImg = new ClipImg({
+          file: file,
+          clip: {
+            width: '100%',
+            height: '100px'
+          },
+          onConfirm: res => {
+            resolve(res.clipImgSrc);
+          },
+          onCancel: () => {
+            reject();
+          }
+        });
+      });
+    },
     beforeRead(file) {
       if (file.type == 'image/jpeg' || file.type == 'image/png') {
         return true;
@@ -197,31 +217,39 @@ export default {
     },
     //上传文件
     afterRead(data) {
-      let self = this,
-        formdata = new FormData(),
-        xhr = new XMLHttpRequest();
+      this.clipImgFun(data.file)
+        .then(clip_content => {
+          let self = this,
+            formdata = new FormData(),
+            xhr = new XMLHttpRequest(),
+            file = dataURLtoFile(clip_content, data.file.name);
 
-      formdata.append('file', data.file);
+          formdata.append('file', file);
               
 
-      xhr.open('POST', this.$http.adornUrl('/images/save_user_add_image'), true);
-      xhr.onload = function(oEvent) {
-        if (xhr.status == 200) {
-          let res = JSON.parse(xhr.responseText);
+          xhr.open('POST', this.$http.adornUrl('/images/save_user_add_image'), true);
+          xhr.onload = function(oEvent) {
+            if (xhr.status == 200) {
+              let res = JSON.parse(xhr.responseText);
 
-          if (res && res.retcode == 0) {
-            self.params.ad_image_url = res.result_rows[0].image_url;
-          } else {
-            self.params.ad_image_url = '';
-            self.$toast(res.retmsg);
-          }
-        }
-      };
+              if (res && res.retcode == 0) {
+                self.params.ad_image_url = res.result_rows[0].image_url;
+              } else {
+                self.params.ad_image_url = '';
+                self.$toast(res.retmsg);
+              }
+            }
+          };
 
-      xhr.onerror = function(error) {
-        self.$toast(error);
-      };
-      xhr.send(formdata);
+          xhr.onerror = function(error) {
+            self.$toast(error);
+          };
+          xhr.send(formdata);
+        })
+        .catch(() => {
+          
+        });
+
     }
   }
 };

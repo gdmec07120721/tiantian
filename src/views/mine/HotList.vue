@@ -95,9 +95,11 @@ export default {
   watch: {
     tab_actived(nv) {
       this.refreshList();
+      this.onLoad();
     },
     updated() {
       this.refreshList();
+      this.onLoad();
     }
   },
   methods: {

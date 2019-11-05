@@ -127,6 +127,7 @@ export default {
   watch: {
     updated() {
       this.refreshList();
+      this.onLoad();
       this.getuserNewsStatistics();
     }
   },

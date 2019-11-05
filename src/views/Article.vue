@@ -20,9 +20,9 @@
       />
     </div>
     <div class="article-inster">
-      <div class="article-home-btn" @click="toHome">
+      <!-- <div class="article-home-btn" @click="toHome">
         <van-icon name="wap-home" size="20px" />
-      </div>
+      </div> -->
       <div>
         <van-button type="danger" size="small" class="article-inster-btn" @click="toInster">插入我的名片</van-button>
       </div>
@@ -122,10 +122,10 @@ export default {
 
             wx.config(wx_config);
             wx.ready(function () {
-              let desc = self.article.text.replace(/<[^>]+>/g, '').substring(0, 30);
+              let desc = self.article.text.replace(/<[^>]+>/g, '').substring(0, 20);
               let share_data = {
                 title: self.article.news_headline, // 分享标题
-                desc: `${desc}...`, // 分享描述
+                desc: `【${self.user.nickname}】邀您阅读：${desc}...`, // 分享描述
                 link: self.share.link,
                 imgUrl: self.share.img_url,
                 success: function (res) {
@@ -203,7 +203,8 @@ export default {
       }
     },
     toInster() {
-      this.$router.push({ name: 'articleEdit', params: { id: this.news_id }});
+      window.location.href = window.SITE_CONFIG.oa_url;
+      //this.$router.push({ name: 'articleEdit', params: { id: this.news_id }});
     },
     //行为上报
     behavior({ ad_id = '', operate_type = '' }) {
@@ -227,7 +228,8 @@ export default {
       });
     },
     toHome() {
-      this.$router.push({ name: 'index' });
+      window.location.href = window.SITE_CONFIG.oa_url;
+      //this.$router.push({ name: 'index' });
     }
   }
 };

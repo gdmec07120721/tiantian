@@ -17,4 +17,7 @@
 
   //微信secret
   window.SITE_CONFIG['weixin_secret']  = 'wxd5c2cc2ea615ff8e'; 
+
+  //微信公众号链接
+  window.SITE_CONFIG['oa_url'] = 'https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzU2OTk2Nzk0Mg==&scene=110#wechat_redirect';
 })();

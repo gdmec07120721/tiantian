@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { isPhoneNumber, isAndroid } from '@/utils/index';
+import { isPhoneNumber, isAndroid, dataURLtoFile } from '@/utils/index';
 // clip 部分代码
 import ClipImg from '@/utils/clipImg';
 
@@ -178,20 +178,30 @@ export default {
           }
         });
     },
+    clipImgFun(file) {
+      return new Promise((resolve, reject) => {
+        // clip部分代码 S
+        this.clipImg = new ClipImg({
+          file: file,
+          clip: {
+            width: '150px',
+            height: '120px'
+          },
+          minClip: {
+            width: 150,
+            height: 120
+          },
+          scale: true,
+          onConfirm: res => {
+            resolve(res.clipImgSrc);
+          },
+          onCancel: () => {
+            reject();
+          }
+        });
+      });
+    },
     beforeRead(file) {
-      // clip部分代码 S
-      // this.clipImg = new ClipImg({
-      //   file: file,
-      //   clip: {
-      //     width: '100%',
-      //     height: '80px'
-      //   },
-      //   onConfirm: res => {
-      //     //self.clipImgSrc = res.clipImgSrc;
-      //   }
-      // });
-
-      // clip 部分代码 E
       if (file.type == 'image/jpeg' || file.type == 'image/png') {
         return true;
       } else {
@@ -201,31 +211,34 @@ export default {
     },
     //上传文件
     afterRead(data) {
-      let self = this,
-        formdata = new FormData(),
-        xhr = new XMLHttpRequest();
+      this.clipImgFun(data.file)
+        .then(clip_content => {
+          let self = this,
+            formdata = new FormData(),
+            xhr = new XMLHttpRequest(),
+            file = dataURLtoFile(clip_content, data.file.name);
 
-      formdata.append('file', data.file);
+          formdata.append('file', file);
               
+          xhr.open('POST', this.$http.adornUrl('/images/save_user_add_image'), true);
+          xhr.onload = function(oEvent) {
+            if (xhr.status == 200) {
+              let res = JSON.parse(xhr.responseText);
 
-      xhr.open('POST', this.$http.adornUrl('/images/save_user_add_image'), true);
-      xhr.onload = function(oEvent) {
-        if (xhr.status == 200) {
-          let res = JSON.parse(xhr.responseText);
+              if (res && res.retcode == 0) {
+                self.params.user_head_portrait = res.result_rows[0].image_url;
+              } else {
+                self.params.user_head_portrait = '';
+                self.$toast(res.retmsg);
+              }
+            }
+          };
 
-          if (res && res.retcode == 0) {
-            self.params.user_head_portrait = res.result_rows[0].image_url;
-          } else {
-            self.params.user_head_portrait = '';
-            self.$toast(res.retmsg);
-          }
-        }
-      };
-
-      xhr.onerror = function(error) {
-        self.$toast(error);
-      };
-      xhr.send(formdata);
+          xhr.onerror = function(error) {
+            self.$toast(error);
+          };
+          xhr.send(formdata);
+        });
     }
   }
 };

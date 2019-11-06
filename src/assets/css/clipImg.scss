@@ -1,3 +1,352 @@
+<template>
+  <div class="content">
+    <el-card shadow="never" class="mb-lg">
+      <div slot="header" class="clearfix">
+        <h4>Catalog Management</h4>
+      </div>
+      <el-form ref="form" :model="params" label-position="right" size="medium" label-width="150px">
+        <el-row>
+          <el-col :span="7">
+            <el-form-item label="Catalog name">
+              <el-input v-model="params.catalogName" placeholder="Catalog name" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item>
+          <el-button type="primary" size="medium" :loading="listLoading" @click="query(1)">{{ $t('button.search') }}</el-button>
+          <el-button type="primary" plain size="medium" icon="el-icon-plus" @click="addCatalog">Add catalog</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <el-card class="box-card" shadow="never">
+      <div>
+        <el-table
+          v-loading="listLoading"
+          :data="catalogList"
+          border
+          size="medium" 
+          style="width: 100%"
+        >
+          <el-table-column prop="id" label="Catalog ID" align="center" />
+          <el-table-column prop="catalogName" label="Catalog Name" />
+          <el-table-column prop="pathName" label="Path Name" />
+          <el-table-column prop="sn" label="SN" />
+          <el-table-column prop="reportNumber" label="Report Number" align="center" />
+          <el-table-column prop="status" label="Catalog Status" align="center">
+            <template slot-scope="scope">
+              <template v-if="!scope.row.statusIsEdit">
+                <el-tag :disable-transitions="true" size="small" :type="scope.row.catalogStatus == 1 ? 'success' : 'info'">
+                  {{ scope.row.catalogStatus == 1 ? 'Effective' : 'Invalid' }}
+                </el-tag>
+              </template>
+              <template v-else>
+                <el-select v-model="catalogStatus.status" size="mini" placeholder="Select" @change="changeStatus(catalogStatus.status, scope.row)">
+                  <el-option label="Effective" value="1" />
+                  <el-option label="Invalid" value="0" />
+                </el-select>
+              </template>
+            </template>
+          </el-table-column>
+          <el-table-column prop="creator" label="Creator" />
+          <el-table-column prop="modifier" label="Operator" />
+          <el-table-column label="Operating time">
+            <template slot-scope="scope">{{ scope.row.modifyTime | format }}</template>
+          </el-table-column>
+          <el-table-column label="Operations" align="center" width="320">
+            <template slot-scope="scope">
+              <el-button type="text" @click="editCatalog(scope.row)">Edit</el-button>
+              <el-button type="text" @click="handleEditStatus(scope.row)">{{ scope.row.statusIsEdit ? 'Cancel' : 'Change status' }}</el-button>
+              <el-button type="text" class="text-danger" @click="handleDelete(scope.row)">Delete</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+      <div class="mt-lg text-right">
+        <el-pagination
+          :current-page="currentPage"
+          :page-sizes="[10, 20, 30, 50, 100]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </el-card>
+
+    <!-- 增加编辑目录 S -->
+    <el-dialog
+      :title="catalogParams.id ? 'Edit catalog' :'New catalog'"
+      :visible.sync="dialogVisible"
+      width="30%"
+      @close="closeDialog"
+    >
+      <el-form ref="addForm" :model="catalogParams" :rules="rules" label-width="120px" label-position="right" size="medium">
+        <el-row>
+          <el-col :span="20">
+            <el-form-item label="Name" prop="catalogName">
+              <el-input v-model="catalogParams.catalogName" placeholder="Please input the catalog name" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="20">
+            <el-form-item label="Path" prop="pathName">
+              <el-input v-model="catalogParams.pathName" placeholder="Please input the catalog path" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="20">
+            <el-form-item label="Permission SN" prop="sn">
+              <el-input v-model="catalogParams.sn" placeholder="Please input the catalog permission SN" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <div class="text-right">
+        <el-button @click="closeDialog">{{ $t('button.cancel') }}</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="submitForm">{{ $t('button.submit') }}</el-button>
+      </div>
+    </el-dialog>
+    <!-- 增加编辑用户 E -->
+
+    <!-- clip部分代码 S -->
+
+    <el-upload
+      class="upload-demo"
+      action="https://jsonplaceholder.typicode.com/posts/"
+      multiple
+      :limit="3"
+      :before-upload="beforeAvatarUpload"
+    >
+      <el-button size="small" type="primary">点击上传</el-button>
+      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+    </el-upload>
+    <!-- clip部分代码 E -->
+  </div>
+</template>
+
+<script>
+// clip部分代码
+import ClipImg from '@/utils/clipImg';
+// clip部分代码
+import { formatDate } from '@/utils';
+export default {
+  filters: {
+    format(value) {
+      return formatDate(value);
+    }
+  },
+  data() {
+    return {
+      currentPage: 1, // 页码
+      pageSize: 10, // 每页显示条数
+      total: 0, // 总条数
+      params: {
+        catalogName: ''
+      },
+      catalogList: [],
+      catalogParams: {
+        name: '' // 目录名
+      },
+      rules: {
+        catalogName: [{ required: true, trigger: 'blur' }],
+        pathName: [{ required: true, trigger: 'blur' }],
+        sn: [{ required: true, trigger: 'blur' }]
+      },
+      system: [
+        {
+          sid: 1,
+          name: 'Super Admin',
+          disabled: true
+        },
+        {
+          sid: 2,
+          name: 'Audit system'
+        },
+        {
+          sid: 3,
+          name: 'Collection system'
+        }
+      ],
+      catalogStateConfig: {
+        '0': 'Outline', // 未上线
+        '1': 'Online', // 已上线
+        '2': 'Hidden' // 隐藏
+      },
+      catalogStatus: {
+        status: '0',
+        mid: ''
+      },
+      dialogVisible: false,
+      listLoading: false,
+      submitLoading: false,
+      isEdit: false,
+      // clip部分代码
+      clipObj: null
+    };
+  },
+  created () {
+    this.query(this.currentPage);
+  },
+  methods: {
+    // clip部分代码
+    beforeAvatarUpload(file) {
+      console.log(file);
+      this.clipObj = new ClipImg({
+        file: file,
+        clip: {
+          width: '150px',
+          height: '120px'
+        },
+        minClip: {
+          width: 150,
+          height: 120
+        },
+        scale: true
+      });
+    },
+    // clip部分代码
+    query(current, size = 10) {
+      this.listLoading = true;
+      this.$ajax.get('/report/reportCatalog/getCatalogPage', {
+        current,
+        size,
+        catalogName: this.params.catalogName
+      }).then(resp => {
+        const { code, data } = resp;
+
+        this.listLoading = false;
+        if (code === 0) {
+          const { current, size, total, records } = data;
+          this.currentPage = current;
+          this.total = total;
+          this.pageSize = size;
+          this.catalogList = records.map(item => {
+            return Object.assign({}, item, {
+              statusIsEdit: false
+            });
+          });
+        }
+      });
+    },
+    addCatalog() {
+      this.dialogVisible = true;
+    },
+    editCatalog(item) {
+      this.dialogVisible = true;
+      this.catalogParams = { ...item };
+    },
+    submitForm() {
+      let url,
+        params = {
+          catalogName: this.catalogParams.catalogName,
+          pathName: this.catalogParams.pathName,
+          sn: this.catalogParams.sn
+        };
+
+      if (this.catalogParams.id) {
+        url = '/report/reportCatalog/updateCatalog';
+        params = Object.assign({}, params, {
+          id: this.catalogParams.id
+        });
+      } else {
+        url = '/report/reportCatalog/saveCatalog';
+      }
+
+      this.$refs.addForm.validate((valid) => {
+        if (valid) {
+          this.submitLoading = true;
+          this.$ajax.post(url, params).then(resp => {
+            this.submitLoading = false;
+            const { code } = resp;
+            if (code === 0) {
+              this.$message({
+                type: 'success',
+                message: this.catalogParams.id ? 'Edit completed' : 'Add completed'
+              });
+              this.closeDialog();
+              this.$router.go(0);
+            }
+          });
+        } else {
+          this.$message({
+            type: 'error',
+            message: 'error submit!'
+          });
+          return false;
+        }
+      });
+    },   
+    closeDialog() {
+      this.$refs.addForm.resetFields();
+      this.dialogVisible = false;
+    },
+    //改变状态
+    changeStatus(status, item) {
+      this.$confirm('Are you sure to change the catalog\'s status?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$ajax.post('/report/reportCatalog/updateCatalog', {
+          id: item.id,
+          catalogStatus: status
+        }).then(resp => {
+          item.statusIsEdit = false;
+
+          if (resp.code === 0) {
+            this.$message({
+              type: 'success',
+              message: 'Edit completed'
+            });
+            this.$router.go(0);
+          }
+        });
+      }).catch(() => {
+        item.statusIsEdit = false;
+      });
+    },
+    handleEditStatus(item) {
+      item.statusIsEdit = !item.statusIsEdit;
+      this.catalogStatus.status = String(item.catalogStatus);
+    },
+    handleDelete(item) {
+      this.$confirm('Are you sure to delete the current catalog?', 'Warning', {
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        this.$ajax.post('/report/reportCatalog/removeCatalogById', {
+          id: item.id
+        }).then(resp => {
+          if (resp.code === 0) {
+            this.$message({
+              type: 'success',
+              message: 'Delete completed'
+            });
+            this.$router.go(0);
+          }
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: 'Delete canceled'
+        });
+      });
+    },
+    handleSizeChange(size) {
+      this.pageSize = size;
+      this.query(1, size);
+    },
+    handleCurrentChange(current) {
+      this.currentPage = current;
+      this.query(current, this.pageSize);
+    }
+  }
+};
+</script>
+
+
+// clip部分代码
+<style lang="scss">
 .clip {
   &-img-wrap, 
   &-wrap {
@@ -45,4 +394,24 @@
       color: #1989fa;
     }
   }
+  &-scale {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    right: -13px;
+    bottom: -13px;
+    background: #fff;
+    border-radius: 15px;
+    text-align: center;
+    padding-top: 5px;
+  }
+  &-preview {
+    width: 30%;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+  }
 }
+</style>
+

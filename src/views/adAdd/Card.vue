@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { isPhoneNumber, isAndroid, dataURLtoFile } from '@/utils/index';
+import { isPhoneNumber, dataURLtoFile } from '@/utils/index';
 // clip 部分代码
 import ClipImg from '@/utils/clipImg';
 
@@ -136,7 +136,6 @@ export default {
       })
         .then(res => {
           if (res && res.retcode == 0) {
-            console.log('res.result_rows[0]', res.result_rows[0]);
             this.params = res.result_rows[0].user_business_card || {
               card_type: 0,
               user_head_portrait: require('../../assets/images/icon-banner-upload.png')
@@ -184,11 +183,11 @@ export default {
         this.clipImg = new ClipImg({
           file: file,
           clip: {
-            width: '150px',
+            width: '200px',
             height: '120px'
           },
           minClip: {
-            width: 150,
+            width: 200,
             height: 120
           },
           scale: true,

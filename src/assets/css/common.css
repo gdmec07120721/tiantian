@@ -39,18 +39,18 @@ body {background: #F7F7F7;}
 .card-btn {line-height: 25px; height: 25px; font-size: 12px;}
 .card-second {display: flex;align-items: stretch; position: relative; overflow: hidden; border-radius: 4px; height: 120px;}
 .card-second-img-bg {padding: 0; margin: 0;}
-.card-second-img {width: 43%;}
+.card-second-img {width: 200px;}
 .card-second-img img{display: block; width: 100%;}
-.card-second-info {position: absolute; width: 65%; height: 120px; top: 0; right: 0; z-index: 2; font-size: 12px;}
+.card-second-info {position: absolute; width: 48%; height: 120px; top: 0; right: 0; z-index: 2; font-size: 12px;}
 .card-second-info::after {content: ''; position: absolute; top: 0; left: 0; right: 0; height: 0; border-bottom: 120px solid #fff; border-left: 35px solid transparent; z-index: -1;}
 .card-second-info > ul {text-align: left; margin: auto; position: absolute; right: 15px; top: 30px;}
 .card-second-info > ul > li {padding-bottom: 5px; display: flex; align-items: center; font-size: #333;}
 .card-second-info > ul > li > i{padding-right: 3px; color: #F1413D;}
 .card-second-info .card-btn {position: absolute; bottom: 12px; right: 15px;}
-.card-second-name {background: #fff; border-left: 4px solid #F1413D; position: absolute; bottom: 15px; left: 40px; z-index: 3; padding: 2px 15px; box-shadow: 2px 3px 10px #aaa; transform: skewX(-20deg);}
+.card-second-name {background: #fff; border-left: 4px solid #F1413D; position: absolute; bottom: 15px; left: 20%; z-index: 3; padding: 2px 15px; box-shadow: 2px 3px 10px #aaa; transform: skewX(-20deg);}
 .card-second-name > p {transform: skewX(20deg); padding: 0; margin: 0;}
 .card-name {font-size: 15px; display: inline-block; vertical-align: bottom; }
-.card-position {font-size: 12px; color: #666666; padding-left: 5px; display: inline-block; vertical-align: bottom;}
+.card-position {font-size: 12px; color: #666666; padding-left: 15px; display: inline-block; vertical-align: bottom;}
 
 /* TheCardOne.vue */
 .card-one{ padding: 15px; height: 80px; z-index:1; border-radius: 4px;     position:relative; overflow: hidden; background: url('../../assets/images/card-one.png') no-repeat; background-size: 100% 100%; }
@@ -66,3 +66,8 @@ body {background: #F7F7F7;}
 .card-one-btn .card-btn {padding: 0 20px;}
 .card-one-img {position: absolute; right: 17px; top: -40px; }
 .card-one-img .van-image--round {border: 2px solid #fff;}
+
+@media screen and (min-width: 350px){
+    .card-second-info {width: 58%;}
+    .card-second-name {left: 25%;}
+  }

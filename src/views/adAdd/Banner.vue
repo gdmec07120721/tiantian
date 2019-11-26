@@ -84,7 +84,7 @@
 </template>
 
 <script>
-import { isURL, isPhoneNumber, isAndroid, dataURLtoFile } from '@/utils/index';
+import { isURL, isPhoneNumber, dataURLtoFile } from '@/utils/index';
 // clip 部分代码
 import ClipImg from '@/utils/clipImg';
 

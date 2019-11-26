@@ -16,7 +16,7 @@ export default class ClipImg {
       <div id="clipImgDiv" class="clip-img-wrap" style="width: ${params.width}px; height: ${params.height}px;">
         <div id="clipDiv" class="clip-div" style="width: ${params.clip.width}; height: ${params.clip.height};">
           <div class="clip-scale" id="clipScale" style="display: ${params.scale ? 'block' : 'none'}">
-          <svg class="icon" width="20px" height="20px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#F1413D" d="M63.960615 509.636923C25.757538 509.636923 0 483.879385 0 445.833846V63.645538C0 25.6 25.757538 0 63.960615 0h383.291077c38.203077 0 63.803077 25.6 63.803077 63.566769 0 38.203077-25.678769 63.803077-63.960615 63.803077H217.245538l216.930462 216.694154a62.700308 62.700308 0 0 1 19.377231 44.583385 62.542769 62.542769 0 0 1-19.298462 44.425846 62.779077 62.779077 0 0 1-44.662154 19.219692 62.385231 62.385231 0 0 1-44.740923-19.140923l-217.088-216.615385v229.376c0 38.045538-25.6 63.645538-63.803077 63.645539M576.275692 1020.376615c-38.045538 0-63.566769-25.6-63.566769-63.645538 0-38.045538 25.521231-63.566769 63.566769-63.566769h229.848616l-217.009231-216.615385a63.015385 63.015385 0 0 1-19.298462-44.583385 63.015385 63.015385 0 0 1 19.298462-44.583384 62.936615 62.936615 0 0 1 44.662154-19.140923c16.541538 0 32.374154 6.774154 44.583384 19.062154l217.403077 216.457846V574.385231c0-38.045538 25.6-63.645538 63.803077-63.645539 37.966769 0 63.566769 25.678769 63.566769 63.803077v382.188308c0 38.045538-25.6 63.645538-63.566769 63.645538H576.275692z" /></svg>
+          <svg class="icon" width="20px" height="20px" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"><path fill="#1989fa" d="M63.960615 509.636923C25.757538 509.636923 0 483.879385 0 445.833846V63.645538C0 25.6 25.757538 0 63.960615 0h383.291077c38.203077 0 63.803077 25.6 63.803077 63.566769 0 38.203077-25.678769 63.803077-63.960615 63.803077H217.245538l216.930462 216.694154a62.700308 62.700308 0 0 1 19.377231 44.583385 62.542769 62.542769 0 0 1-19.298462 44.425846 62.779077 62.779077 0 0 1-44.662154 19.219692 62.385231 62.385231 0 0 1-44.740923-19.140923l-217.088-216.615385v229.376c0 38.045538-25.6 63.645538-63.803077 63.645539M576.275692 1020.376615c-38.045538 0-63.566769-25.6-63.566769-63.645538 0-38.045538 25.521231-63.566769 63.566769-63.566769h229.848616l-217.009231-216.615385a63.015385 63.015385 0 0 1-19.298462-44.583385 63.015385 63.015385 0 0 1 19.298462-44.583384 62.936615 62.936615 0 0 1 44.662154-19.140923c16.541538 0 32.374154 6.774154 44.583384 19.062154l217.403077 216.457846V574.385231c0-38.045538 25.6-63.645538 63.803077-63.645539 37.966769 0 63.566769 25.678769 63.566769 63.803077v382.188308c0 38.045538-25.6 63.645538-63.566769 63.645538H576.275692z" /></svg>
           </div>
         </div>
         <canvas id="imgCanvas" class="clip-img-canvas" width="${params.width}" height="${params.height}"></canvas>
@@ -176,7 +176,7 @@ export default class ClipImg {
     event.preventDefault();
 
     //初始化截取框移动目标值
-    let { clientX, clientY } = event.changedTouches[0] || event;
+    let { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
 
     this.clip = { clientX, clientY };
     //可以移动截取框
@@ -188,7 +188,7 @@ export default class ClipImg {
     
     //判断是否可移动截取框
     if (this.isMove) {
-      let { clientX, clientY } = event.changedTouches[0] || event; //获取移动目标的 X，Y位置
+      let { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event; //获取移动目标的 X，Y位置
       let offsetTop = this.clipDiv.offsetTop; //获取截取框距离父元素上边的位置
       let top = offsetTop + (clientY -  this.clip.clientY); //获取移动后截取框距离父元素上边的位置
       let offsetLeft = this.clipDiv.offsetLeft; //获取截取框距离父元素左边的位置
@@ -223,28 +223,30 @@ export default class ClipImg {
     event.stopPropagation();
 
     //初始化截取框移动目标值
-    let { clientX, clientY } = event.changedTouches[0] || event;
+    let { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event;
 
     this.clipScaleClient = { clientX, clientY };
     //可以缩放截取框
     this.isScale = true;
+    console.log('this.clipScaleClient', this.clipScaleClient)
   }
   
   scaleTouchmoveHandler(event) {
     event.stopPropagation();
 
     if (this.isScale) {
-      let { clientX, clientY } = event.changedTouches[0] || event; //获取移动目标的 X，Y位置
+      let { clientX, clientY } = event.changedTouches ? event.changedTouches[0] : event; //获取移动目标的 X，Y位置
 
-      
       let offsetTop = this.clipDiv.offsetTop; //获取截取框距离父元素上边的位置
       let offsetLeft = this.clipDiv.offsetLeft; //获取截取框距离父元素左边的位置
       let height = this.clipDiv.offsetHeight + (clientY - this.clipScaleClient.clientY); //获取截取框缩放后的高度
-      let width = (height * this.clipDiv.offsetWidth) / this.clipDiv.offsetHeight; //获取截取框缩放后的宽度
+      let width = ((height * (this.clipDiv.offsetWidth + 1)))/ (this.clipDiv.offsetHeight); //获取截取框缩放后的宽度
       //判断截取框移动的位置是否超出父元素的下范围
       let isExceedB = ((offsetTop + height) < (this.clipImgDiv.offsetHeight)) && (height > this.props.minClip.height); 
       //判断截取框移动的位置是否超出父元素的右范围
       let isExceedR = ((offsetLeft + width) < (this.clipImgDiv.offsetWidth)) && (width > this.props.minClip.width); 
+
+      console.log('clientY', clientY, 'this.clipScaleClient', this.clipScaleClient, 'this.clipDiv.offsetHeight', this.clipDiv.offsetHeight, '(clientY - this.clipScaleClient.clientY)', (clientY - this.clipScaleClient.clientY), 'height', height, 'this.clipDiv.offsetWidth', this.clipDiv.offsetWidth, 'width', width)
 
       if (isExceedB && isExceedR) {
         this.clipDiv.style.width = width + 'px';

@@ -1,7 +1,7 @@
 <template>
   <div class="hk-index">
     <div class="hk-index-header">
-      <h3>精准追踪 助你成就销冠</h3>
+      <h3><span>精准追踪 助你成就销冠</span></h3>
     </div>
     <marquee direction="up" onmouseover="this.stop()" onmouseout="this.start()" ontouchstart="this.stop()" ontouchend="this.start()">
       <ul class="hk-index-marquee">
@@ -48,9 +48,17 @@ export default {
 
 <style lang="scss" scoped>
 .hk-index {
+  width: 100vw; 
+  min-height: 100vh; 
+  background: url(@/assets/images/hk-banner.png) no-repeat, linear-gradient(#E53935, #E35D5B); 
+  background-size: 100%; 
+
   &-header {
     & h3 {
-      display: inline-block; padding: 2px 10px;
+      display: inline-block; padding: 2px 10px; font-size: 15px; padding: 3px 15px; background: #fff; border-radius: 50px; transform: skewX(15deg);
+      & > span {
+        display: inline-block; transform: skewX(0deg);
+      }
     }
   }
   &-marquee{

@@ -33,7 +33,9 @@ export default class ClipImg {
   }
 
   constructor (options = {}) {
-    this.isMove = false;
+    //是否可以移动截取框标志
+    this.isMove = false; 
+    //是否可以缩放截取框标志
     this.isScale = false;
     this.props = Object.assign({}, { 
       clip: {
@@ -56,16 +58,21 @@ export default class ClipImg {
     //修剪后的 Image 元素
     this.clipImg = new Image();
 
+    //创建文件流
     this.render()
       .then(() => {
+        //创建截图图片画布
         this.renderCanvas();
+        //创建事件
         this.bindEvent();
       })
       .catch(e => {
         //文件流创建失败
+        console.log(e);
       });
   }
 
+  //创建文件流
   render() {
     return new Promise((resolve, reject) => {
       let self = this;
@@ -148,8 +155,11 @@ export default class ClipImg {
     }
   }
 
+  //确认处理
   confirmHandler() {
+    //获取图片的DataURL
     this.clipImg.src = this.canvas.toDataURL('image/png');
+    //调用确认函数回调
     this.props.onConfirm && this.props.onConfirm({
       clipImg: this.clipImg, 
       clipImgSrc: this.clipImg.src
@@ -157,15 +167,20 @@ export default class ClipImg {
     this.closeHandler();
   }
 
+  //取消处理
   cancelHandler() {
+    //调用取消函数回调
     this.props.onCancel && this.props.onCancel();
     this.closeHandler();
   }
 
+  //关闭处理
   closeHandler() {
+    //清除截图元素对象
     this.wrapperEl.removeChild(this.clipWrap);
   }
 
+  //预览处理
   previewHandler() {
     this.canvas.width = this.clipDiv.offsetWidth; 
     this.canvas.height = this.clipDiv.offsetHeight;
@@ -228,7 +243,7 @@ export default class ClipImg {
     this.clipScaleClient = { clientX, clientY };
     //可以缩放截取框
     this.isScale = true;
-    console.log('this.clipScaleClient', this.clipScaleClient)
+    console.log('this.clipScaleClient', this.clipScaleClient);
   }
   
   scaleTouchmoveHandler(event) {
@@ -240,13 +255,13 @@ export default class ClipImg {
       let offsetTop = this.clipDiv.offsetTop; //获取截取框距离父元素上边的位置
       let offsetLeft = this.clipDiv.offsetLeft; //获取截取框距离父元素左边的位置
       let height = this.clipDiv.offsetHeight + (clientY - this.clipScaleClient.clientY); //获取截取框缩放后的高度
-      let width = ((height * (this.clipDiv.offsetWidth + 1)))/ (this.clipDiv.offsetHeight); //获取截取框缩放后的宽度
+      let width = ((height * (this.clipDiv.offsetWidth + 1))) / (this.clipDiv.offsetHeight); //获取截取框缩放后的宽度
       //判断截取框移动的位置是否超出父元素的下范围
       let isExceedB = ((offsetTop + height) < (this.clipImgDiv.offsetHeight)) && (height > this.props.minClip.height); 
       //判断截取框移动的位置是否超出父元素的右范围
       let isExceedR = ((offsetLeft + width) < (this.clipImgDiv.offsetWidth)) && (width > this.props.minClip.width); 
 
-      console.log('clientY', clientY, 'this.clipScaleClient', this.clipScaleClient, 'this.clipDiv.offsetHeight', this.clipDiv.offsetHeight, '(clientY - this.clipScaleClient.clientY)', (clientY - this.clipScaleClient.clientY), 'height', height, 'this.clipDiv.offsetWidth', this.clipDiv.offsetWidth, 'width', width)
+      console.log('clientY', clientY, 'this.clipScaleClient', this.clipScaleClient, 'this.clipDiv.offsetHeight', this.clipDiv.offsetHeight, '(clientY - this.clipScaleClient.clientY)', (clientY - this.clipScaleClient.clientY), 'height', height, 'this.clipDiv.offsetWidth', this.clipDiv.offsetWidth, 'width', width);
 
       if (isExceedB && isExceedR) {
         this.clipDiv.style.width = width + 'px';

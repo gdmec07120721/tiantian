@@ -2,8 +2,6 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import routes from '@/router/index';
 import store from '@/store/index';
-import { Toast } from 'vant';
-
 
 Vue.use(Router);
 

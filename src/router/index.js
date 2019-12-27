@@ -75,6 +75,15 @@ const routes = {
       meta: { title: '客户', requiresAuth: true, login: true }
     },
     {
+      path: '/video/:id',
+      name: 'video',
+      // route level code-splitting
+      // this generates a separate chunk (about.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import(/* webpackChunkName: "about" */ '@/views/Video.vue'),
+      meta: { title: '视频' }
+    },
+    {
       path: '/login',
       name: 'login',
       // route level code-splitting
